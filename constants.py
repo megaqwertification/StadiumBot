@@ -38,7 +38,7 @@ AKANEIA_CHARACTERS = [
     "Diddy Kong",
     "Charizard"
 ]
-# TODO: add akaneia versions
+# TODO: add akaneia versions, sandbag
 
 STAGES = [
     "Dr. Mario",
@@ -68,6 +68,8 @@ STAGES = [
     "Roy",
     "Seak",
 ]
+
+# TODO: add akaneia stage
 
 VERSIONS = [
     "NTSC 1.00",
