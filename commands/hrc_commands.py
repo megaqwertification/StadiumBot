@@ -140,7 +140,7 @@ def register_hrc_commands(bot: Client):
                     "version" : record[9]
                 }
                 # don't need all these details
-                char = details["char"]
+                char = details["char"].strip()
                 score_ft = details["score_ft"]
                 score_m = details["score_m"]
                 player = details["player"]
