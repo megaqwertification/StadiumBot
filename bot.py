@@ -8,7 +8,7 @@ from interactions import Client, Intents
 # from commands.owner_commands import register_owner_commands
 
 STADIUM_BOT_TOKEN = os.getenv('STADIUM_BOT_TOKEN')
-bot = Client(token=STADIUM_BOT_TOKEN, intents=Intents.ALL)
+bot = Client(token=STADIUM_BOT_TOKEN, intents=Intents.DEFAULT)
 
 
 # register_owner_commands(bot)
