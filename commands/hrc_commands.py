@@ -106,9 +106,9 @@ def register_hrc_commands(bot: Client):
         # option 3: store all WRs in a separate table
         # Consider also storing over limit WRs for 
         # remember to think about ties, except ganon/ICs/Peach
-        is_TAS=True
+        #is_TAS=True
         description_lines = [
-            f'Home-Run Contest {"TAS " if is_TAS else ""}World Records (ft/m)\n'
+            f'Home-Run Contest {"TAS " if is_TAS else "RTA "}World Records (ft/m)\n'
         ]
         metre_sum = 0
         cur = conn.cursor()
@@ -155,7 +155,8 @@ def register_hrc_commands(bot: Client):
                 if (char.strip() == "Ganondorf" or char.strip() == "Ice Climbers") and not is_TAS: # strip newlines
                     player = "many"
 
-                # TODO: Limit WRs TAS implementation
+                # TODO: Limit WRs TAS implementation, even if scuffed
+                # if limit in tags, 
                 # limit_WRs = { "Ganondorf" : 476, "Ice Climbers" : 406, "Peach" : 600}
 
                 description_lines.append(
