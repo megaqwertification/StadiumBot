@@ -85,35 +85,39 @@ def register_hrc_commands(bot: Client):
         name='hrc-wr-list',
         description='Display the list of current WRs',
         scope=[PERSONAL_GUILD_ID],
-        # make one of the options just WRs, instead of a command like this.... actually that would complicate the fuck out of this
+        options=[
+            Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            ),
+        ]    # make one of the options just WRs, instead of a command like this.... actually that would complicate the fuck out of this
     )
 
     # how to do optional commands? with default values?
     # refactor to get the highest distance(s) in the database
-    async def _hrc_wr_list(ctx: CommandContext):
-        # TODO: add TAS flag (switch case)
-
+    async def _hrc_wr_list(ctx: CommandContext, **kwargs):
+        is_TAS = kwargs.get("tas", False)
         conn = connect()
         #hrcwrs_sql = f'SELECT * FROM hrc_table WHERE character='{}' ORDER BY score_ft DESC LIMIT 1'
         # option 1: a master query that simply filters out for the best times per char
         # option 2: loop through all 25 chars to get the wrs
         # option 3: store all WRs in a separate table
-
+        # Consider also storing over limit WRs for 
         # remember to think about ties, except ganon/ICs/Peach
-
+        is_TAS=True
         description_lines = [
-            f"Home-Run Contest World Records (ft/m)\n"
+            f'Home-Run Contest {"TAS " if is_TAS else ""}World Records (ft/m)\n'
         ]
         metre_sum = 0
         cur = conn.cursor()
 
         for item in HRC_CHARACTERS:
             # god knows why this query works
-            query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\') AND character=\'{item}\';'
-            #cur.execute(f'SELECT * FROM hrc_table WHERE character=\'{item}\' ORDER BY score_ft DESC LIMIT 1') # make an f-string that gets the best score for each char, what about WR ties? can
+            query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\' AND tas={is_TAS}) AND character=\'{item}\' AND tas={is_TAS};'
             cur.execute(query)
-        # i hard code "many" for ICs and Ganon? and just link to marth1 / joe bushman's vids?
-
+        
             # there is 1000% a way to just query and get the top row(s) of world records, will look into it
             # TODO: handle WR ties; add player name to side, video too?
 
@@ -121,10 +125,7 @@ def register_hrc_commands(bot: Client):
             for record in cur:
                 
                 if counter > 0:
-                    # append player name and that's it, player = record[1]}
-                    # only append if character name matches too, otherwise ganon/ics will have improperly assigned ties
                     description_lines[-1] += f', {record[1]}'
-                    # counter += 1
                     continue
                 details = {
                     "char": record[0],
@@ -138,21 +139,24 @@ def register_hrc_commands(bot: Client):
                     "tags" : record[8],
                     "version" : record[9]
                 }
+                # don't need all these details
                 char = details["char"]
-                #print(char)
                 score_ft = details["score_ft"]
                 score_m = details["score_m"]
                 player = details["player"]
                 if len(details['sources']) != 0: # should just make this "not empty" or something lol
                     video = details["sources"][0]
                 else:
-                    video = "a" 
+                    video = "a" # temporary 
                 
                 metre_sum += float(score_m)
                 
-                # Hardcode Ganon/ICs ties for readability
-                if char.strip() == "Ganondorf" or char.strip() == "Ice Climbers": # strip newlines
+                # Hardcode Ganon/ICs RTA ties for readability
+                if (char.strip() == "Ganondorf" or char.strip() == "Ice Climbers") and not is_TAS: # strip newlines
                     player = "many"
+
+                # TODO: Limit WRs TAS implementation
+                # limit_WRs = { "Ganondorf" : 476, "Ice Climbers" : 406, "Peach" : 600}
 
                 description_lines.append(
                     f"{char} - [{score_ft}ft/{score_m}m]({video}) - \t {player}"
@@ -161,8 +165,8 @@ def register_hrc_commands(bot: Client):
                 counter += 1
 
         metre_sum = round(metre_sum,1)
-        #ft_sum =  (metre_sum * const * 10 )// 10 # temp, need precise
         ft_sum = m_to_ft(metre_sum)
+
         # TODO: add YT playlist links? 
 
         total_distance = f'\nTotal Distance (ft/m): {ft_sum}/{metre_sum}'
@@ -184,27 +188,31 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.STRING,
                 required=True,
                 #choices = [Choice(name="character", value=char ) for char in HRC_CHARACTERS]
-            )
+            ),
             # TODO: Add TAS option flag
+            Option(
+                name='tas',
+                description='RTA vs. TAS (default RTA)', # TODO: standardize descriptions of parameters
+                type=OptionType.BOOLEAN,
+                required=False,
+            )
         ],
     )
 
     async def _hrc_history(ctx: CommandContext, **kwargs):
         # TODO: add TAS flag (switch case which just affects the query "AND tas=false")
         # TODO: experiment with a date argument so that you can get the history of the record at a certain date
+        # TODO: raise value errors
         char_name = kwargs.get("character")
-        
-
+        is_TAS = kwargs.get('tas', False)
         conn = connect()
 
-        #hrcwrs_sql = f'SELECT * FROM hrc_table WHERE character='{}' ORDER BY score_ft DESC LIMIT 1'
         # option 1: a master query that simply filters out for the best times per char
         # option 2: loop through all 25 chars to get the wrs
         # option 3: store all WRs in a separate table
-
         # remember to think about ties, except ganon/ICs
 
-        sql_q = f'SELECT * FROM hrc_table WHERE character=\'{char_name}\' and tas=false ORDER BY date ASC;'
+        sql_q = f'SELECT * FROM hrc_table WHERE character=\'{char_name}\' and tas={is_TAS} ORDER BY date ASC;'
         cur = conn.cursor()
         cur.execute(sql_q) # make an f-string that gets the best score for each char, what about WR ties? can
         # i hard code "many" for ICs and Ganon? and just link to marth1 / joe bushman's vids?
@@ -289,7 +297,7 @@ def register_hrc_commands(bot: Client):
         const = 3.2809688582
         ft_sum =  (metre_sum * const * 10 )// 10 # temp, need precise
 
-        description_lines.append(f"History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n")
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n')
         # reverse list
         description_lines.reverse()
 
