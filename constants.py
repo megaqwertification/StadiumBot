@@ -1,3 +1,7 @@
+PERSONAL_GUILD_ID = 977851191088267274
+STADIUM_GUILD_ID = 132025591770644480
+
+# TODO: how to properly implement zelda/sheik vs zelda vs sheik based on mode
 CHARACTERS = [
     "Dr. Mario",
     "Mario",
@@ -25,22 +29,45 @@ CHARACTERS = [
     "Marth",
     "Roy",
     "Zelda",
+    "Zelda/Sheik"
     "Ice Climbers",
     "M. Wireframe",
     "F. Wireframe",
     "Giga Bowser",
     "Master Hand",
     "Crazy Hand",
+    "Sandbag",
 ]
 
-AKANEIA_CHARACTERS = [
-    "Wolf",
-    "Diddy Kong",
-    "Charizard"
+HRC_CHARACTERS = [
+    "Dr. Mario",
+    "Mario",
+    "Luigi",
+    "Bowser",
+    "Peach",
+    "Yoshi",
+    "Donkey Kong",
+    "Captain Falcon",
+    "Ganondorf",
+    "Falco",
+    "Fox",
+    "Ness",
+    "Ice Climbers",
+    "Kirby",
+    "Samus",
+    "Zelda/Sheik",
+    "Link",
+    "Young Link",
+    "Pichu",
+    "Pikachu",
+    "Jigglypuff",
+    "Mewtwo",
+    "Mr. Game & Watch",
+    "Marth",
+    "Roy",
 ]
-# TODO: add akaneia versions, sandbag
 
-STAGES = [
+BTT_STAGES = [
     "Dr. Mario",
     "Mario",
     "Luigi",
@@ -69,11 +96,71 @@ STAGES = [
     "Seak",
 ]
 
-# TODO: add akaneia stage
-
 VERSIONS = [
     "NTSC 1.00",
     "NTSC 1.01",
     "NTSC 1.02",
     "PAL"
 ]
+
+EVENTS = [
+    "Trouble King", 
+    "Lord of the Jungle",
+    "Bomb-fest",
+    "Dino-wrangling",
+    "Spare Change",
+    "Kirbys on Parade",
+    "Pokemon Battle", # accent aigu?    
+    "Hot Date on Brinstar",
+    "Hide 'n' Sheik",
+    "All-Star Match 1",
+    "King of the Mountain",
+    "Seconds, Anyone?",
+    "Yoshi's Egg",
+    "Trophy Tussle 1",
+    "Girl Power",
+    "Kirby's Air-raid",
+    "Bounty Hunters",
+    "Link's Adventure",
+    "Peach's Peril",
+    "All-Star Match 2",
+    "Ice Breaker",
+    "Super Mario 128",
+    "Slippy's Invention",
+    "The Yoshi Herd",
+    "Gargantuants",
+    "Trophy Tussle 2",
+    "Cold Armor",
+    "Pluffballs Unite!",
+    "Triforce Gathering",
+    "All-Star Match 3",
+    "Mario Bros. Madness",
+    "Target Acquired",
+    "Lethal Marathon",
+    "Seven Years",
+    "Time for a Checkup",
+    "Space Travelers",
+    "Legendary Pokemon", # accent aigu?
+    "Super Mario Bros. 2",
+    "Jigglypuff Live!",
+    "All-Star Match 4",
+    "En Garde!",
+    "Trouble King 2",
+    "Birds of Prey",
+    "Mewtwo Strikes",
+    "Game & Watch Forever!", 
+    "Fire Emblem Pride", 
+    "Trophy Tussle 3",
+    "Pikachu and Pichu",
+    "All-Star Match Deluxe",
+    "Final Destination Match",
+    "The Showdown"
+]
+
+# AKANEIA_CHARACTERS_STAGES = [
+#     "Wolf",
+#     "Diddy Kong",
+#     "Charizard"
+# ]
+# TODO: add akaneia versions
+# AKANEIA_VERSIONS = [ see akaneia github ]
