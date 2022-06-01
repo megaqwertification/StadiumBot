@@ -140,7 +140,7 @@ def register_hrc_commands(bot: Client):
                     "version" : record[9]
                 }
                 # don't need all these details
-                char = details["char"].strip()
+                char = details["char"]
                 score_ft = details["score_ft"]
                 score_m = details["score_m"]
                 player = details["player"]
@@ -160,7 +160,7 @@ def register_hrc_commands(bot: Client):
                 # limit_WRs = { "Ganondorf" : 476, "Ice Climbers" : 406, "Peach" : 600}
 
                 description_lines.append(
-                    f"{char} - [{score_ft}ft/{score_m}m]({video}) - \t {player}"
+                    f"{char} - [{score_ft}ft/{score_m}m]({video}) - {player}"
                     # mobile formatting is weird  :(
                 )
                 counter += 1
