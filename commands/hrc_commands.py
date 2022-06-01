@@ -141,6 +141,7 @@ def register_hrc_commands(bot: Client):
                 }
                 # don't need all these details
                 char = details["char"]
+                char = char.strip()
                 score_ft = details["score_ft"]
                 score_m = details["score_m"]
                 player = details["player"]
