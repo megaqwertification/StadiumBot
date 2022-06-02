@@ -171,7 +171,7 @@ def register_hrc_commands(bot: Client):
 
         # TODO: add YT playlist links? 
 
-        total_distance = f'\nTotal Distance (ft/m): {ft_sum}/{metre_sum}'
+        total_distance = f'\nTotal Distance (ft/m): [{ft_sum}ft/{metre_sum}m]({"https://www.youtube.com/playlist?list=PLP-fO_NfCBaqUn-Ffu9prgx7n7Qu-e5HJ" if is_TAS else "https://www.youtube.com/playlist?list=PLP-fO_NfCBar7sV9wCR0G0aJHDDDru-T3"})'
         description_lines.append(total_distance)
 
         await embeds.send_embeds(description_lines, ctx)
