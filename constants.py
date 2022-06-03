@@ -65,6 +65,8 @@ HRC_CHARACTERS = [
     "Mr. Game & Watch",
     "Marth",
     "Roy",
+    "Zelda",
+    "Sheik"
 ]
 
 BTT_STAGES = [

@@ -10,6 +10,7 @@ from formulas import m_to_ft
 
 from db import connect
 # TODO: raise exceptions
+# TODO: implement char regex
 
 def register_hrc_commands(bot: Client):
     @bot.command(
@@ -23,27 +24,48 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.STRING,
                 required=True,
             ),
-            # option: TAS, can't do until i figure out how to deal with num-frames to hit the limit
-            # option: version, more relevant for HRC tbh; make this a "choices" option
-            # if tas is specified, dont specify version in the SQL query..... unless?
-            # ugh i guess if people want it they can have it
+            Option(
+                name='tas',
+                description='RTA vs. TAS (default RTA)',
+                type=OptionType.STRING,
+                required=False
+            ),
+            Option(
+                name='version',
+                description='NTSC vs. PAL (default WR version)',
+                type=OptionType.STRING,
+                choices=[
+                    Choice(
+                        name='PAL',
+                        value='PAL',
+                    ),
+                    Choice(
+                        name='NTSC',
+                        value='NTSC'
+                    ),
+                ],
+                required=False
+            )
+            # TODO: limit WR num-frame implementation
+            # TODO: decide if over-limit records should be tracked, and if so, fix code for that
+            # TODO: add option: version, more relevant for HRC tbh; make this a "choices" option for PAL/NTSC
+            # TODO: add SuS flags for WR querying
         ]
     )
     
     async def _hrc_wr(ctx: CommandContext, **kwargs):
-        # TODO: Add TAS flag functionality
-        # TODO: tas wrs are ones with lowest frames for maxed things -_-, can just order by date....??????????????? how would i say numframes????
-        # TODO: learn why this is async, relearn async/await lmfao
+        # TODO: tas wrs are ones with lowest frames for maxed things
         char_name = kwargs.get("character")
+        if char_name not in HRC_CHARACTERS:
+            raise ValueError(f'Please select a valid character')
         is_tas = kwargs.get('tas', False)
+        ver = kwargs.get('version', None)
 
         conn = connect()
 
-        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas}) AND character=\'{char_name}\' AND tas={is_tas} ORDER BY date ASC;' # 
-        # issue if WR tie happens on same day, would have to look at timestamp
+        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND version={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND version={ver} " if ver != None else ""} ORDER BY date ASC;' # 
+        # issue if WR tie happens on same day, would have to look at timestamp, unless date ASC handles that
         # idk what this situation is for HRC, but defs needs to happen for BtT
-        # or can just add a time column but would have to play around with the indexes...shoud
-        
         # if run / other columns dont exist what do? video record?
 
         cur = conn.cursor()
@@ -92,41 +114,37 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.BOOLEAN,
                 required=False,
             ),
-        ]    # make one of the options just WRs, instead of a command like this.... actually that would complicate the fuck out of this
+        ]   
     )
 
-    # how to do optional commands? with default values?
-    # refactor to get the highest distance(s) in the database
     async def _hrc_wr_list(ctx: CommandContext, **kwargs):
         is_TAS = kwargs.get("tas", False)
         conn = connect()
-        #hrcwrs_sql = f'SELECT * FROM hrc_table WHERE character='{}' ORDER BY score_ft DESC LIMIT 1'
         # option 1: a master query that simply filters out for the best times per char
         # option 2: loop through all 25 chars to get the wrs
-        # option 3: store all WRs in a separate table
-        # Consider also storing over limit WRs for 
-        # remember to think about ties, except ganon/ICs/Peach
-        #is_TAS=True
+        # option 3: store all WRs in a separate table (x)
+        # Consider also storing over limit WRs for ganon/ICs peach TAS
+        # remember to think about ties, except ganon/ICs
+
         description_lines = [
-            f'Home-Run Contest {"TAS " if is_TAS else "RTA "}World Records (ft/m)\n'
+            f'Home-Run Contest {"TAS " if is_TAS else "RTA "}World Records\n'
         ]
         metre_sum = 0
         cur = conn.cursor()
 
-        for item in HRC_CHARACTERS:
-            # god knows why this query works
+        for item in HRC_CHARACTERS[-2]:
             query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\' AND tas={is_TAS}) AND character=\'{item}\' AND tas={is_TAS};'
             cur.execute(query)
         
             # there is 1000% a way to just query and get the top row(s) of world records, will look into it
             # TODO: handle WR ties; add player name to side, video too?
-
+            # TODO: handle if there's no results from the query at all
             counter = 0
             for record in cur:
-                
                 if counter > 0:
                     description_lines[-1] += f', {record[1]}'
                     continue
+                # TODO: consolidate this
                 details = {
                     "char": record[0],
                     "player" : record[1],
@@ -148,12 +166,14 @@ def register_hrc_commands(bot: Client):
                 if len(details['sources']) != 0: # should just make this "not empty" or something lol
                     video = details["sources"][0]
                 else:
+                    # TODO: implement video record rather than "none"
                     video = "a" # temporary 
+                    
                 
                 metre_sum += float(score_m)
                 
                 # Hardcode Ganon/ICs RTA ties for readability
-                if (char.strip() == "Ganondorf" or char.strip() == "Ice Climbers") and not is_TAS: # strip newlines
+                if (char.strip() == "Ganondorf" or char.strip() == "Ice Climbers") and not is_TAS:
                     player = "many"
 
                 # TODO: Limit WRs TAS implementation, even if scuffed
@@ -162,16 +182,13 @@ def register_hrc_commands(bot: Client):
 
                 description_lines.append(
                     f"{char} - [{score_ft}ft/{score_m}m]({video}) - {player}"
-                    # mobile formatting is weird  :(
                 )
                 counter += 1
 
         metre_sum = round(metre_sum,1)
         ft_sum = m_to_ft(metre_sum)
 
-        # TODO: add YT playlist links? 
-
-        total_distance = f'\nTotal Distance (ft/m): [{ft_sum}ft/{metre_sum}m]({"https://www.youtube.com/playlist?list=PLP-fO_NfCBaqUn-Ffu9prgx7n7Qu-e5HJ" if is_TAS else "https://www.youtube.com/playlist?list=PLP-fO_NfCBar7sV9wCR0G0aJHDDDru-T3"})'
+        total_distance = f'\nTotal Distance: [{ft_sum}ft/{metre_sum}m]({"https://www.youtube.com/playlist?list=PLP-fO_NfCBaqUn-Ffu9prgx7n7Qu-e5HJ" if is_TAS else "https://www.youtube.com/playlist?list=PLP-fO_NfCBar7sV9wCR0G0aJHDDDru-T3"})'
         description_lines.append(total_distance)
 
         await embeds.send_embeds(description_lines, ctx)
@@ -277,7 +294,7 @@ def register_hrc_commands(bot: Client):
             prev_score = score_ft
             if video == None:
                 description_lines.append(
-                    f'({date}) - \t {score_ft}ft/{score_m}m - {player}'# ({date})'
+                    f'({date}) - {score_ft}ft/{score_m}m - {player}'# ({date})'
                     # no video shows up weird on mobile
                 )    
             else:
