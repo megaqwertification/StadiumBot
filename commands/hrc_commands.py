@@ -90,7 +90,7 @@ def register_hrc_commands(bot: Client):
             score_ft = record[2]
             score_m = record[3]
             video = record[4][0] # what if there's no source on main vid...? shoudl have helper function to get the YT vid     
-            # if no vid and no other WR holders, we need to get_video_record()... i guess.
+            # if no vid and no other WR holders have a vid, we need to get_video_record()... i guess?
             # ugh, code this later lol       
             version = record[9] # decide if this is necessary
             counter += 1
@@ -206,7 +206,6 @@ def register_hrc_commands(bot: Client):
                 required=True,
                 #choices = [Choice(name="character", value=char ) for char in HRC_CHARACTERS]
             ),
-            # TODO: Add TAS option flag
             Option(
                 name='tas',
                 description='RTA vs. TAS (default RTA)', # TODO: standardize descriptions of parameters
@@ -322,9 +321,13 @@ def register_hrc_commands(bot: Client):
         #description_lines.insert(0, f"History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n")
 
         #print(description_lines)
+        
+        # TODO: add links to history sheet? Only applicable for RTA for HRC
+        if not is_TAS:
+            description_lines.append(f'\n [Full HRC History Sheet](https://docs.google.com/spreadsheets/d/1qbd8nquan3mGl87Ja1ogwK1SQIE_Fa-Yki-8wRbm9BY/edit#gid=0)')
 
         await embeds.send_embeds(description_lines, ctx)
-        # TODO: add links to history sheet?
+        
 
         cur.close()
         conn.close()
