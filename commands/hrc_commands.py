@@ -30,22 +30,22 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.BOOLEAN,
                 required=False
             ),
-            Option(
-                name='version',
-                description='NTSC vs. PAL (default WR version)',
-                type=OptionType.STRING,
-                choices=[
-                    Choice(
-                        name='PAL',
-                        value='PAL',
-                    ),
-                    Choice(
-                        name='NTSC',
-                        value='NTSC'
-                    ),
-                ],
-                required=False
-            )
+            # Option(
+            #     name='version',
+            #     description='NTSC vs. PAL (default WR version)',
+            #     type=OptionType.STRING,
+            #     choices=[
+            #         Choice(
+            #             name='PAL',
+            #             value='PAL',
+            #         ),
+            #         Choice(
+            #             name='NTSC',
+            #             value='NTSC'
+            #         ),
+            #     ],
+            #     required=False
+            # )
             # TODO: limit WR num-frame implementation
             # TODO: decide if over-limit records should be tracked, and if so, fix code for that
             # TODO: add option: version, more relevant for HRC tbh; make this a "choices" option for PAL/NTSC
@@ -55,15 +55,17 @@ def register_hrc_commands(bot: Client):
     
     async def _hrc_wr(ctx: CommandContext, **kwargs):
         # TODO: tas wrs are ones with lowest frames for maxed things
+        # TODO: implement version
         char_name = kwargs.get("character")
         if char_name not in HRC_CHARACTERS:
             raise ValueError(f'Please select a valid character')
         is_tas = kwargs.get('tas', False)
-        ver = kwargs.get('version', None)
+        #ver = kwargs.get('version', None)
 
         conn = connect()
-
-        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""} ORDER BY date ASC;' # 
+        # sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""} ORDER BY date ASC;' # 
+        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} ) AND character=\'{char_name}\' AND tas={is_tas} ORDER BY date ASC;' # 
+        
         # issue if WR tie happens on same day, would have to look at timestamp, unless date ASC handles that
         # idk what this situation is for HRC, but defs needs to happen for BtT
         # if run / other columns dont exist what do? video record?
@@ -95,10 +97,6 @@ def register_hrc_commands(bot: Client):
         # TODO: make sure "video" gets first source and not all sources
         # TODO: organize ties
         players_string = ", ".join(players)
-
-            
-
-        
 
         wr_string = f'{char_name} - {score_ft}ft/{score_m}m by {players_string} at {video}'
         await ctx.send(wr_string)
