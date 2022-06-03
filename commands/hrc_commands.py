@@ -59,12 +59,12 @@ def register_hrc_commands(bot: Client):
         char_name = kwargs.get("character")
         if char_name not in HRC_CHARACTERS:
             raise ValueError(f'Please select a valid character')
-        is_tas = kwargs.get('tas', False)
+        is_TAS = kwargs.get('tas', False)
         #ver = kwargs.get('version', None)
 
         conn = connect()
         # sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""} ORDER BY date ASC;' # 
-        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} ) AND character=\'{char_name}\' AND tas={is_tas} ORDER BY date ASC;' # 
+        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_TAS} ) AND character=\'{char_name}\' AND tas={is_TAS} ORDER BY date ASC;' # 
         
         # issue if WR tie happens on same day, would have to look at timestamp, unless date ASC handles that
         # idk what this situation is for HRC, but defs needs to happen for BtT
@@ -98,7 +98,7 @@ def register_hrc_commands(bot: Client):
         # TODO: organize ties
         players_string = ", ".join(players)
 
-        wr_string = f'{char_name} - {score_ft}ft/{score_m}m by {players_string} at {video}'
+        wr_string = f'{"(TAS) " if is_TAS else "RTA "} {char_name} - {score_ft}ft/{score_m}m by {players_string} at {video}'
         await ctx.send(wr_string)
     
     @bot.command(
