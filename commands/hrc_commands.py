@@ -27,7 +27,7 @@ def register_hrc_commands(bot: Client):
             Option(
                 name='tas',
                 description='RTA vs. TAS (default RTA)',
-                type=OptionType.STRING,
+                type=OptionType.BOOLEAN,
                 required=False
             ),
             Option(
@@ -63,7 +63,7 @@ def register_hrc_commands(bot: Client):
 
         conn = connect()
 
-        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND version={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND version={ver} " if ver != None else ""} ORDER BY date ASC;' # 
+        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""} ORDER BY date ASC;' # 
         # issue if WR tie happens on same day, would have to look at timestamp, unless date ASC handles that
         # idk what this situation is for HRC, but defs needs to happen for BtT
         # if run / other columns dont exist what do? video record?
