@@ -1,10 +1,20 @@
-from constants import PERSONAL_GUILD_ID
+from constants import HRC_CHARACTERS, PERSONAL_GUILD_ID, VERSIONS
 from db import connect
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType
 
 # TODO: verify insertions are valid. eg. make sure it's ntsc1.02 and not ntsc 1.02
 # can cross-ref with constants
+
+# HELPER functions
+
+# GENERAL
+#def check_sources(sources: list ) -> :
+#    check_src_sql = 
+
+# HRC
+
+
 
 def register_owner_commands(bot: Client):
     @bot.command(
@@ -80,21 +90,34 @@ def register_owner_commands(bot: Client):
 
     async def _add_hrc_record(ctx: CommandContext, **kwargs):
         char = kwargs.get("character")
+        # TODO: raise error if character isn't in database
+        # TODO: allow for zelda and sheik individual records 
+        if char not in HRC_CHARACTERS:
+            raise ValueError(f'Please select a valid character')
+        
         player = kwargs.get("player")
-
-        # TODO: verify metre and feet scores
+        # TODO: have to raise some sort of exception if player doesn't exist.... in database table?
+        
         score_ft = kwargs.get("score_ft") # if score m isn't given or something
         score_m = kwargs.get("score_m") # verify score and you only need one tbh
-
-
+        # TODO: verify metre and feet scores
+        
 
         sources = kwargs.get('sources', '') 
-        date = kwargs.get('date', 'Unknown') # default system time so it auto corrects to UTC+00:00, when you're submitting. otherwise unknown
+        # TODO: add check_source function and update source function
+        
+        date = kwargs.get('date', '') # default system time so it auto corrects to UTC+00:00, when you're submitting. otherwise unknown
+        # TODO: add check_date function
 
         is_tas = kwargs.get('tas', False)
         is_emulator = kwargs.get('emulator', False)
         tags = kwargs.get('tags', '') 
-        ver = kwargs.get('ver', 'Unknown')
+        # TODO: make a check tags function and update tags function
+
+        ver = kwargs.get('ver', '')
+        # TODO: add regex for all of these (e.g. match NTSC1.02 with ntsc1.02 with NTSC 1.02 etc.)
+        if ver not in VERSIONS:
+            raise ValueError(f'Please select a valid version')
         
         
         # TODO: raise exceptions
@@ -102,7 +125,8 @@ def register_owner_commands(bot: Client):
         # TODO: check if you're adding a new source 
         # TODO: if exists, update source and other null values using pqsl UPDATE
         # TODO: check if it's a tie (actually dont have to if you properly implement the hrc commands)
-        # TODO: if tas, has to be equal to or greater than RTA, 
+        # TODO: if tas, has to be equal to or greater than RTA, actually no bcs wak's old link TAS is worse than RTA
+        # so maybe compare dates idk. unless an RTA record is maxed , 
 
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
@@ -188,4 +212,3 @@ def register_owner_commands(bot: Client):
     #     # conn
     #     # 
     #     return None
-

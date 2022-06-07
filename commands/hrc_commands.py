@@ -11,6 +11,7 @@ from formulas import m_to_ft
 from db import connect
 # TODO: raise exceptions
 # TODO: implement char regex
+# TODO: decide if tags should be inserted/stored alphabetically
 
 def register_hrc_commands(bot: Client):
     @bot.command(
