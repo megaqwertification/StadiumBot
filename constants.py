@@ -65,8 +65,6 @@ HRC_CHARACTERS = [
     "Mr. Game & Watch",
     "Marth",
     "Roy",
-    "Zelda",
-    "Sheik"
 ]
 
 BTT_STAGES = [
@@ -99,9 +97,9 @@ BTT_STAGES = [
 ]
 
 VERSIONS = [
-    "NTSC1.00",
-    "NTSC1.01",
-    "NTSC1.02",
+    "NTSC 1.00",
+    "NTSC 1.01",
+    "NTSC 1.02",
     "PAL"
 ]
 
