@@ -131,10 +131,10 @@ def register_hrc_commands(bot: Client):
         metre_sum = 0
         cur = conn.cursor()
 
-        for item in HRC_CHARACTERS[-2]:
+        for item in HRC_CHARACTERS[:-2]:
             query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\' AND tas={is_TAS}) AND character=\'{item}\' AND tas={is_TAS};'
             cur.execute(query)
-        
+            
             # there is 1000% a way to just query and get the top row(s) of world records, will look into it
             # TODO: handle WR ties; add player name to side, video too?
             # TODO: handle if there's no results from the query at all
@@ -166,7 +166,7 @@ def register_hrc_commands(bot: Client):
                     video = details["sources"][0]
                 else:
                     # TODO: implement video record rather than "none"
-                    video = "a" # temporary 
+                    video = None # temporary 
                     
                 
                 metre_sum += float(score_m)
@@ -243,7 +243,6 @@ def register_hrc_commands(bot: Client):
 
         description_lines = []
 
-        metre_sum = 0
         prev_score = 0
 
         for record in cur:
@@ -292,13 +291,11 @@ def register_hrc_commands(bot: Client):
             prev_score = score_ft
             if video == None:
                 description_lines.append(
-                    f'({date}) - {score_ft}ft/{score_m}m - {player}'# ({date})'
-                    # no video shows up weird on mobile
+                    f'({date}) - {score_ft}ft/{score_m}m - {player}'
                 )    
             else:
                 description_lines.append(
-                    f'({date}) - [{score_ft}ft/{score_m}m]({video}) - {player}' # ({date})'
-                    # no video shows up weird on mobile
+                    f'({date}) - [{score_ft}ft/{score_m}m]({video}) - {player}'
                 )
 
             #if tied_player != None:
@@ -309,10 +306,6 @@ def register_hrc_commands(bot: Client):
             #tied_player = None
         
         #     )
-
-        metre_sum = round(metre_sum,1)
-        const = 3.2809688582
-        ft_sum =  (metre_sum * const * 10 )// 10 # temp, need precise
 
         description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n')
         # reverse list
@@ -325,7 +318,7 @@ def register_hrc_commands(bot: Client):
         
         # TODO: add links to history sheet? Only applicable for RTA for HRC
         if not is_TAS:
-            description_lines.append(f'\n [Full HRC History Sheet](https://docs.google.com/spreadsheets/d/1qbd8nquan3mGl87Ja1ogwK1SQIE_Fa-Yki-8wRbm9BY/edit#gid=0)')
+            description_lines.append(f'\n [Full HRC RTA History Sheet](https://docs.google.com/spreadsheets/d/1qbd8nquan3mGl87Ja1ogwK1SQIE_Fa-Yki-8wRbm9BY/edit#gid=0)')
 
         await embeds.send_embeds(description_lines, ctx)
         
