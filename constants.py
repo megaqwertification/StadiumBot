@@ -2,7 +2,7 @@ PERSONAL_GUILD_ID = 977851191088267274
 STADIUM_GUILD_ID = 132025591770644480
 
 # TODO: how to properly implement zelda/sheik vs zelda vs sheik based on mode
-CHARACTERS = [
+TENMM_CHARACTERS = [
     "Dr. Mario",
     "Mario",
     "Luigi",
@@ -15,10 +15,10 @@ CHARACTERS = [
     "Falco",
     "Fox",
     "Ness",
-    "Popo",
+    "Ice Climbers",
     "Kirby",
     "Samus",
-    "Sheik",
+    "Zelda",
     "Link",
     "Young Link",
     "Pichu",
@@ -28,9 +28,9 @@ CHARACTERS = [
     "Mr. G&W",
     "Marth",
     "Roy",
-    "Zelda",
+    "Sheik",
     "Zelda/Sheik"
-    "Ice Climbers",
+    "Popo",
     "M. Wireframe",
     "F. Wireframe",
     "Giga Bowser",
@@ -65,6 +65,8 @@ HRC_CHARACTERS = [
     "Mr. Game & Watch",
     "Marth",
     "Roy",
+    "Zelda",
+    "Sheik"
 ]
 
 BTT_STAGES = [
@@ -97,9 +99,9 @@ BTT_STAGES = [
 ]
 
 VERSIONS = [
-    "NTSC 1.00",
-    "NTSC 1.01",
-    "NTSC 1.02",
+    "NTSC1.00",
+    "NTSC1.01",
+    "NTSC1.02",
     "PAL"
 ]
 
@@ -110,7 +112,7 @@ EVENTS = [
     "Dino-wrangling",
     "Spare Change",
     "Kirbys on Parade",
-    "Pokemon Battle", # accent aigu?    
+    "Pokémon Battle",
     "Hot Date on Brinstar",
     "Hide 'n' Sheik",
     "All-Star Match 1",
@@ -140,7 +142,7 @@ EVENTS = [
     "Seven Years",
     "Time for a Checkup",
     "Space Travelers",
-    "Legendary Pokemon", # accent aigu?
+    "Legendary Pokémon",
     "Super Mario Bros. 2",
     "Jigglypuff Live!",
     "All-Star Match 4",
