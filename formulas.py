@@ -21,9 +21,24 @@ def m_to_ft(score_m) -> float:
 
 
 # time to frames
-def time_to_frames(time):
+def time_to_frames(time: float) -> str:
     # should work for debug as well.
     return str(round(time*60))
 
 
 # TODO: frames to time
+# https://github.com/mchen91/mismatch-bot/blob/main/use_cases/frame_conversion.py
+def frames_to_time_string(frames: int) -> str:
+    hours, rem = divmod(frames, 60 * 60 * 60)
+    minutes, rem = divmod(rem, 60 * 60)
+    seconds, rem = divmod(rem, 60)
+    centiseconds = (rem * 99) // 59
+    padded_centis = str(centiseconds).zfill(2)
+    if hours > 0:
+        padded_minutes = str(minutes).zfill(2)
+        padded_seconds = str(seconds).zfill(2)
+        return f"{hours}:{padded_minutes}:{padded_seconds}.{padded_centis}"
+    if minutes > 0:
+        padded_seconds = str(seconds).zfill(2)
+        return f"{minutes}:{padded_seconds}.{padded_centis}"
+    return f"{seconds}.{padded_centis}"
