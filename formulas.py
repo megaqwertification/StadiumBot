@@ -1,4 +1,5 @@
 from math import floor, log2
+import difflib
 
 # TODO: make these python 3 function style definitions
 # TODO: Verify these formulas
@@ -42,3 +43,9 @@ def frames_to_time_string(frames: int) -> str:
         padded_seconds = str(seconds).zfill(2)
         return f"{minutes}:{padded_seconds}.{padded_centis}"
     return f"{seconds}.{padded_centis}"
+
+
+def get_char_name(char_input, consts):
+    alias = difflib.get_close_matches(char_input, consts, 1, 0).pop()
+    char_name = consts[alias]
+    return char_name

@@ -166,3 +166,56 @@ EVENTS = [
 # ]
 # TODO: add akaneia versions
 # AKANEIA_VERSIONS = [ see akaneia github ]
+
+ALIASES = {
+    # alias : char_name
+    'Dr. Mario' : 'Dr. Mario',
+    'doc' : 'Dr. Mario',
+    'dr.' : 'Dr. Mario',
+    'doctor mario': 'Dr. Mario',
+    'Mario' : 'Mario',
+    'Luigi' : 'Luigi',
+    'Bowser' : 'Bowser',
+    'Peach' : 'Peach',
+    'Yoshi' : 'Yoshi',
+    'Donkey Kong': 'Donkey Kong',
+    'dk' : 'Donkey Kong',
+    'Captain Falcon' : 'Captain Falcon',
+    'Falcon' : 'Captain Falcon',
+    'cf' : 'Captain Falcon',
+    'Falco' : 'Falco',
+    'Fox' : 'Fox',
+    'Ness' : 'Ness',
+    'Popo' : 'Popo', # add alias check when selecting sopo as stage name?
+    'sopo' : 'Popo', 
+    'ic' : 'Popo', 
+    'Kirby' : 'Kirby',
+    'Samus' : 'Samus',
+    'Sheik' : 'Sheik',
+    'Link' : 'Link',
+    'Young Link' : 'Young Link',
+    'yl' : 'Young Link',
+    'Pichu' : 'Pichu',
+    'Pikachu' : 'Pikachu',
+    'Jigglypuff' : 'Jigglypuff',
+    'jiggs' : 'Jigglypuff',
+    'puff' : 'Jigglypuff',
+    'Mewtwo' : 'Mewtwo',
+    'm2' : 'Mewtwo',
+    'Mr. Game & Watch' : 'Mr. Game & Watch',
+    'g&w' : 'Mr. Game & Watch',
+    'gw' : 'Mr. Game & Watch',
+    'Marth' : 'Marth',
+    'Roy' : 'Roy',
+    'Zelda/Sheik' : 'Zelda/Sheik',
+    'z/s' : "Zelda/Sheik",
+    'Zelda' : 'Zelda',
+    'Ice Climbers' : 'Ice Climbers',
+    'ics' : 'Ice Climbers',
+    'Giga Bowser' : 'Giga Bowser', 
+    'Male Wireframe' : 'Male Wireframe',
+    'Female Wireframe' : 'Female Wireframe',
+    'Master Hand' : 'Master Hand',
+    'Crazy Hand' : 'Crazy Hand'
+    
+}
