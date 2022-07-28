@@ -5,19 +5,16 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
-from formulas import m_to_ft
+from constants import ALIASES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from formulas import m_to_ft, get_char_name
 
 from db import connect
-# TODO: raise exceptions
-# TODO: implement char regex
-# TODO: decide if tags should be inserted/stored alphabetically
 
 def register_hrc_commands(bot: Client):
     @bot.command(
         name='hrc-wr',
         description='Query a character\'s current WR',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, ],
         options=[
             Option(
                 name='character',
@@ -31,55 +28,21 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.BOOLEAN,
                 required=False
             ),
-            # Option(
-            #     name='version',
-            #     description='NTSC vs. PAL (default WR version)',
-            #     type=OptionType.STRING,
-            #     choices=[
-            #         Choice(
-            #             name='PAL',
-            #             value='PAL',
-            #         ),
-            #         Choice(
-            #             name='NTSC',
-            #             value='NTSC'
-            #         ),
-            #     ],
-            #     required=False
-            # )
-            # TODO: limit WR num-frame implementation
-            # TODO: decide if over-limit records should be tracked, and if so, fix code for that
-            # TODO: add option: version, more relevant for HRC tbh; make this a "choices" option for PAL/NTSC
-            # TODO: add SuS flags for WR querying
         ]
     )
     
     async def _hrc_wr(ctx: CommandContext, **kwargs):
-        # TODO: tas wrs are ones with lowest frames for maxed things
-        # TODO: implement version
-        char_name = kwargs.get("character")
+        char_input = kwargs.get("character")
+        char_name = get_char_name(char_input, ALIASES)
         if char_name not in HRC_CHARACTERS:
             raise ValueError(f'Please select a valid character')
         is_TAS = kwargs.get('tas', False)
-        #ver = kwargs.get('version', None)
 
         conn = connect()
-        # sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""}) AND character=\'{char_name}\' AND tas={is_tas} {f" AND ver={ver} " if ver != None else ""} ORDER BY date ASC;' # 
         sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_TAS} ) AND character=\'{char_name}\' AND tas={is_TAS} ORDER BY date ASC;' # 
-        
-        # issue if WR tie happens on same day, would have to look at timestamp, unless date ASC handles that
-        # idk what this situation is for HRC, but defs needs to happen for BtT
-        # if run / other columns dont exist what do? video record?
-
         cur = conn.cursor()
         cur.execute(sql_q)
 
-        # consultation from typo
-        # command should have both NTSC and PAL WRs, can easily do and post the first people with both to get it
-        # should ideally sort by which is larger tho, i can figure that out
-        # do version differences still matter in 2022?
-
-        # SCUFFED METHOD. see cursor object documetnation
         counter = 0
         players = []
         for record in cur:
@@ -90,13 +53,8 @@ def register_hrc_commands(bot: Client):
             players.append(record[1])
             score_ft = record[2]
             score_m = record[3]
-            video = record[4][0] # what if there's no source on main vid...? shoudl have helper function to get the YT vid     
-            # if no vid and no other WR holders have a vid, we need to get_video_record()... i guess?
-            # ugh, code this later lol       
-            version = record[9] # decide if this is necessary
+            video = record[4][0]
             counter += 1
-        # TODO: make sure "video" gets first source and not all sources
-        # TODO: organize ties
         players_string = ", ".join(players)
 
         wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} - {score_ft}ft/{score_m}m by {players_string} at {video}'
@@ -119,11 +77,6 @@ def register_hrc_commands(bot: Client):
     async def _hrc_wr_list(ctx: CommandContext, **kwargs):
         is_TAS = kwargs.get("tas", False)
         conn = connect()
-        # option 1: a master query that simply filters out for the best times per char
-        # option 2: loop through all 25 chars to get the wrs
-        # option 3: store all WRs in a separate table (x)
-        # Consider also storing over limit WRs for ganon/ICs peach TAS
-        # remember to think about ties, except ganon/ICs
 
         description_lines = [
             f'Home-Run Contest {"TAS " if is_TAS else "RTA "}World Records\n'
@@ -135,9 +88,6 @@ def register_hrc_commands(bot: Client):
             query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\' AND tas={is_TAS}) AND character=\'{item}\' AND tas={is_TAS};'
             cur.execute(query)
             
-            # there is 1000% a way to just query and get the top row(s) of world records, will look into it
-            # TODO: handle WR ties; add player name to side, video too?
-            # TODO: handle if there's no results from the query at all
             counter = 0
             for record in cur:
                 if counter > 0:
@@ -174,10 +124,6 @@ def register_hrc_commands(bot: Client):
                 # Hardcode Ganon/ICs RTA ties for readability
                 if (char.strip() == "Ganondorf" or char.strip() == "Ice Climbers") and not is_TAS:
                     player = "many"
-
-                # TODO: Limit WRs TAS implementation, even if scuffed
-                # if limit in tags, 
-                # limit_WRs = { "Ganondorf" : 476, "Ice Climbers" : 406, "Peach" : 600}
 
                 description_lines.append(
                     f"{char} - [{score_ft}ft/{score_m}m]({video}) - {player}"

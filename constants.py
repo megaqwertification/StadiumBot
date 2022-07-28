@@ -195,8 +195,10 @@ ALIASES = {
     'Link' : 'Link',
     'Young Link' : 'Young Link',
     'yl' : 'Young Link',
+    'ylink' : 'Young Link',
     'Pichu' : 'Pichu',
     'Pikachu' : 'Pikachu',
+    'pika' : 'Pikachu',
     'Jigglypuff' : 'Jigglypuff',
     'jiggs' : 'Jigglypuff',
     'puff' : 'Jigglypuff',
@@ -213,9 +215,13 @@ ALIASES = {
     'Ice Climbers' : 'Ice Climbers',
     'ics' : 'Ice Climbers',
     'Giga Bowser' : 'Giga Bowser', 
+    'giga' : 'Giga Bowser',
     'Male Wireframe' : 'Male Wireframe',
+    'mwf' : 'Male Wireframe',
     'Female Wireframe' : 'Female Wireframe',
+    'fwf' : 'Female Wireframe',
     'Master Hand' : 'Master Hand',
-    'Crazy Hand' : 'Crazy Hand'
-    
+    'mh' : 'Master Hand',
+    'Crazy Hand' : 'Crazy Hand',
+    'ch' : 'Crazy Hand'
 }
