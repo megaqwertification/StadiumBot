@@ -102,6 +102,7 @@ def register_event_commands(bot: Client):
         for event_id in range(1,len(EVENTS)+1):
             event_type = get_event_type(event_id)
             
+            #if is_TAS == True:
             if event_id in no_tas_event_wr:
                 is_TAS = False
             else:
@@ -156,7 +157,7 @@ def register_event_commands(bot: Client):
             
             )
             counter += 1
-
+            is_TAS = kwargs.get('tas', False)
     
         total_time = frames_to_time_string(event_time_sum_f)
         totals_str = f'\nTotal Time/KOs: [{total_time}/{event_KO_sum} KOs]({"https://www.youtube.com/playlist?list=PLRSZTIKPRRKT46gHOHtlY3oQQrSzvmJ5I" if is_TAS else "https://www.youtube.com/playlist?list=PLRSZTIKPRRKS-tQnuNrQggYtbvXnUm4j6"})'
