@@ -99,7 +99,7 @@ def register_event_commands(bot: Client):
         ]
         event_time_sum_f = 0
         event_KO_sum = 0
-        no_tas_event_wr = [11,14,17,25,27,35,38,43,46,47]
+        no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
 
         for event_id in range(1,len(EVENTS)+1):
             event_type = get_event_type(event_id)
@@ -165,6 +165,10 @@ def register_event_commands(bot: Client):
         total_time = frames_to_time_string(event_time_sum_f)
         totals_str = f'\nTotal Time/KOs: [{total_time}/{event_KO_sum} KOs]({"https://www.youtube.com/playlist?list=PLRSZTIKPRRKT46gHOHtlY3oQQrSzvmJ5I" if is_TAS else "https://www.youtube.com/playlist?list=PLRSZTIKPRRKS-tQnuNrQggYtbvXnUm4j6"})'
         description_lines.append(totals_str)
+
+        if original_is_TAS:
+            tas_disclaimer = f'RTA is shown in the list if it beats TAS'
+            description_lines.append(tas_disclaimer)
 
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
