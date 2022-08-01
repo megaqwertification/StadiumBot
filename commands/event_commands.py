@@ -104,11 +104,12 @@ def register_event_commands(bot: Client):
         for event_id in range(1,len(EVENTS)+1):
             event_type = get_event_type(event_id)
             
-            #if is_TAS == True:
-            if event_id in no_tas_event_wr and original_is_TAS == True:
-                is_TAS = False
-            else:
-                is_TAS = True
+            if original_is_TAS == True:
+                # account for TAS wrs that were beaten by RTA
+                if event_id in no_tas_event_wr:
+                    is_TAS = False
+                else:
+                    is_TAS = True
 
             conn = connect()
             if event_type == 'timed':
