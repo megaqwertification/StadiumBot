@@ -98,9 +98,15 @@ def register_event_commands(bot: Client):
         ]
         event_time_sum_f = 0
         event_KO_sum = 0
+        no_tas_event_wr = [11,14,17,25,27,35,38,43,46,47]
         for event_id in range(1,len(EVENTS)+1):
             event_type = get_event_type(event_id)
             
+            if event_id in no_tas_event_wr:
+                is_TAS = False
+            else:
+                is_TAS = True
+
             conn = connect()
             if event_type == 'timed':
                 sql_q = f'SELECT * FROM event_table WHERE event_id=\'{event_id}\' AND score = (SELECT MIN(score) FROM event_table WHERE event_id=\'{event_id}\' AND tas={is_TAS}) AND tas={is_TAS} ORDER BY date ASC;'
