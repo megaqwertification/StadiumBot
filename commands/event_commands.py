@@ -105,7 +105,7 @@ def register_event_commands(bot: Client):
             event_type = get_event_type(event_id)
             
             #if is_TAS == True:
-            if event_id in no_tas_event_wr:
+            if event_id in no_tas_event_wr and original_is_TAS == True:
                 is_TAS = False
             else:
                 is_TAS = True
