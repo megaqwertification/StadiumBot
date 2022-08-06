@@ -15,7 +15,7 @@ def register_event_commands(bot: Client):
     @bot.command(
         name='event-wr',
         description='Query an event\'s current WR',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='event_id',
@@ -77,7 +77,7 @@ def register_event_commands(bot: Client):
     @bot.command(
         name='event-wr-list',
         description='Query for event WR list',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='tas',
@@ -100,11 +100,12 @@ def register_event_commands(bot: Client):
         event_time_sum_f = 0
         event_KO_sum = 0
         no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
+        # TODO: would be better if this directly compared with the RTA score
 
         for event_id in range(1,len(EVENTS)+1):
             event_type = get_event_type(event_id)
             
-            if original_is_TAS == True:
+            if original_is_TAS is True:
                 # account for TAS wrs that were beaten by RTA
                 if event_id in no_tas_event_wr:
                     is_TAS = False
@@ -173,19 +174,3 @@ def register_event_commands(bot: Client):
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
         conn.close()
-
-    #def history
-        
-
-    #events w/o TAS or ties RTA:
-    #4
-    #11
-    #14
-    #17 (lol)
-    #25
-    #27
-    #35
-    #38
-    #43
-    #46
-    #47

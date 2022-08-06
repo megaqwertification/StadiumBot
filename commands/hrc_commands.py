@@ -14,7 +14,7 @@ def register_hrc_commands(bot: Client):
     @bot.command(
         name='hrc-wr',
         description='Query a character\'s current WR',
-        scope=[PERSONAL_GUILD_ID, ],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='character',
@@ -63,7 +63,7 @@ def register_hrc_commands(bot: Client):
     @bot.command(
         name='hrc-wr-list',
         description='Display the list of current WRs',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='tas',

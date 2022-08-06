@@ -12,7 +12,7 @@ def register_10mm_commands(bot: Client):
     @bot.command(
         name='10mm-wr',
         description='Query a 10mm current WR',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='character',
@@ -61,7 +61,7 @@ def register_10mm_commands(bot: Client):
     @bot.command(
         name='10mm-wr-list',
         description='Query for 10mm WR list',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='tas',
