@@ -130,7 +130,7 @@ EVENTS = [
     "Super Mario 128",
     "Slippy's Invention",
     "The Yoshi Herd",
-    "Gargantuants",
+    "Gargantuans",
     "Trophy Tussle 2",
     "Cold Armor",
     "Pluffballs Unite!",
