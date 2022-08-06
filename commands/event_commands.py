@@ -40,9 +40,9 @@ def register_event_commands(bot: Client):
         is_TAS = kwargs.get("tas", False)
         event_type = get_event_type(event_id)
         
-        no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
-        if (event_id in no_tas_event_wr) and is_TAS:
-            is_TAS=False
+        # no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
+        # if (event_id in no_tas_event_wr) and is_TAS:
+        #     is_TAS=False
 
         conn = connect()
         if event_type == 'timed':
