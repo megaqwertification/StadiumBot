@@ -183,6 +183,8 @@ ALIASES = {
     'Captain Falcon' : 'Captain Falcon',
     'Falcon' : 'Captain Falcon',
     'cf' : 'Captain Falcon',
+    'Ganondorf' : 'Ganondorf',
+    'ganon' : 'Ganondorf',
     'Falco' : 'Falco',
     'Fox' : 'Fox',
     'Ness' : 'Ness',
