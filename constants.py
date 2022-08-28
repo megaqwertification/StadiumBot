@@ -77,8 +77,8 @@ BTT_STAGES = [
     "Bowser",
     "Peach",
     "Yoshi",
-    "DK",
-    "Falcon",
+    "Donkey Kong",
+    "Captain Falcon",
     "Ganondorf",
     "Falco",
     "Fox",
@@ -86,14 +86,14 @@ BTT_STAGES = [
     "Ice Climbers",
     "Kirby",
     "Samus",
-    "Sheik",
+    "Zelda",
     "Link",
     "Young Link",
     "Pichu",
     "Pikachu",
     "Jigglypuff",
     "Mewtwo",
-    "Mr. G&W",
+    "Mr. Game & Watch",
     "Marth",
     "Roy",
     "Seak",
@@ -226,7 +226,9 @@ ALIASES = {
     'Master Hand' : 'Master Hand',
     'mh' : 'Master Hand',
     'Crazy Hand' : 'Crazy Hand',
-    'ch' : 'Crazy Hand'
+    'ch' : 'Crazy Hand',
+    'Seak' : 'Seak',
+    'seak' : 'Seak',
 }
 
 HRC_SUS_TAGS = {
