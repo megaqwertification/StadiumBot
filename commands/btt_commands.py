@@ -87,7 +87,7 @@ def register_btt_commands(bot: Client):
     @bot.command(
         name='btt-wr-list',
         description='Display the list of current BtT WRs',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             # TODO: add parameters in case you want a char or stage total
             Option(
