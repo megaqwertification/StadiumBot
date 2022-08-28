@@ -151,7 +151,7 @@ def register_btt_commands(bot: Client):
                     char = 'Ice Climbers' 
 
             description_lines.append(
-                f"{char} - [{score_time}]({video}) - {', '.join(players)}"
+                f"{char.strip()} - [{score_time}]({video}) - {', '.join(players)}"
             )
 
             total_high_score_f += int(time_to_frames(score_time))
