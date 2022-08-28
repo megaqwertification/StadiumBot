@@ -1,5 +1,6 @@
 PERSONAL_GUILD_ID = 977851191088267274
 STADIUM_GUILD_ID = 132025591770644480
+GUILD_IDS = [PERSONAL_GUILD_ID, STADIUM_GUILD_ID]
 
 # TODO: how to properly implement zelda/sheik vs zelda vs sheik based on mode
 TENMM_CHARACTERS = [
@@ -226,4 +227,69 @@ ALIASES = {
     'mh' : 'Master Hand',
     'Crazy Hand' : 'Crazy Hand',
     'ch' : 'Crazy Hand'
+}
+
+HRC_SUS_TAGS = {
+    'NBA' : 'No Bat Allowed',
+    'NBD' : 'No Bat Drops',
+    'BMO' : 'B Moves Only',
+    'NJA' : 'No Jump Allowed',
+    'LTA' : 'Limited Time Attack',
+    'Falcon Bat Swing' : 'Use Falcon Bat Swing to hit Sandbag at end',
+    'AAA' : 'All Aerial Attacks',
+}
+
+BTT_SUS_TAGS = {
+    'bair' : 'Back Aerial Only',
+    'dair' : 'Down Aerial Only',
+    'nair' : 'Neutral Aerial Only',
+    'fair' : 'Forward Aerial Only',
+    'uair' : 'Up Aerial Only',
+    'nb' : 'Neutral B Only',
+    'fb' : 'Forward B Only',
+    'upb' : 'Up B Only',
+    'downb' : 'Down B Only',
+    'BMO' : 'B Moves Only',
+    'AMO' : 'A Moves Only',
+    'LTA' : 'Limited Time Attack',
+    'FRO' : 'Facing Right Only',
+    'RWO' : 'Reverse World Record Order',
+    'TTB' : 'Top to Bottom',
+    'BTT' : 'Bottom to Top',
+    'RTL' : 'Right to Left',
+    'LTR' : 'Left to Right',
+    'BSS' : 'Bottom Side Suicide',
+    'RSS' : 'Right Side Suicide',
+    'TSS' : 'Top Side Suicide',
+    'LSS' : 'Left Side Suicide',
+    'NCS' : 'No Control Stick',
+    'NJA' : 'No Jump Allowed',
+    'OHO' : 'One Hand Only',
+    '1T' : 'One Target (T10 of current WR)',
+    '999%' : 'Attain 999% Damage and complete the stage',
+    'hookshot' : 'Hookshot only',
+    'misfire' : 'Misfire only (no code)',
+    # 'Mismatch' : 'Char != Stage',
+    'AR' : "Action Replay / Gecko Coded Runs",
+    'Grounded' : 'All targets must be broken while grounded', # double check this definition
+    'Riddle' : 'tbd',
+    'Ledge Riddle' : 'tbd',
+    'Riddle Glitchless' : 'tbd',
+
+
+    # 'NCS BSS' # NCS is its own categore, make sure NCS runs dont get categorized with suicide runs or completions
+    # e.g. if a NCS luigi exists, make sure the separate NCS and BSS tags dont interfere with it.   
+    # 'no upb, no air dodge, 9 targets (x targets), no neuitral b, mr saturn, beam sword, bomb, no turnips, ar bomb, ar pokebolls , no upb, no pressing down, no nb,  '
+    # 'top target first, all blocks/targets, no glitch'
+    # 'full charge shot, bomb riddle', 'only zelda,', '5 ze 5sheik', 'no forward b', 'no projectiles hookshot','no damage', ''
+    
+}
+
+TENMM_SUS_TAGS = {
+    'OHKO' : 'One-Hit KO (modified moves)',
+    'Throw' : 'Throw Only',
+}
+
+EVENT_SUS_TAGS = {
+    'OHO' : 'One Hand Only',
 }

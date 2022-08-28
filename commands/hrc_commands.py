@@ -38,23 +38,32 @@ def register_hrc_commands(bot: Client):
             raise ValueError(f'Please select a valid character')
         is_TAS = kwargs.get('tas', False)
 
+        # TODO: add error checking for SuS Tags
+        sus_tags = kwargs.get("tags", None)
+        tags_list = [tag.strip() for tag in sus_tags.split(',')] if sus_tags else []
+
         conn = connect()
-        sql_q = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_TAS} ) AND character=\'{char_name}\' AND tas={is_TAS} ORDER BY date ASC;' # 
+        sql_q = f'SELECT * FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_TAS} ORDER BY score_ft DESC, date ASC;'
         cur = conn.cursor()
         cur.execute(sql_q)
 
-        counter = 0
+        # pre-processing for sus tags
+        if tags_list:
+            cur = [record for record in cur if set(tags_list).issubset(record[8])]
+
         players = []
+        curr_score_ft = 0
+        video = None
         for record in cur:
-            if counter > 0:
-                # get vid if it doesn't appear for first WR holder
-                players.append(record[1])
-                continue
+            if record[2] < curr_score_ft:
+                break
             players.append(record[1])
             score_ft = record[2]
             score_m = record[3]
-            video = record[4][0]
-            counter += 1
+            video = record[4][0] if video == None else video # what if no video for any record?
+
+            curr_score_ft = score_ft
+
         players_string = ", ".join(players)
 
         wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} - {score_ft}ft/{score_m}m by {players_string} at {video}'
