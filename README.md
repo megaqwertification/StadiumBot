@@ -17,6 +17,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - view_record command (not priority, but still doable)
 - recordcount command
 - sus/mismatch command verification
+- Add sus tags (and error-checking) for all mode WR list commands, all mode WR history commands, and individual WR query commands (except HRC)
 - top 10 leaderboard per char
 - BTT RTTF and EFB records
 - NOT 2p-4p , I think that's better for a separate, larger database with its own functionality

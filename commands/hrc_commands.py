@@ -30,7 +30,7 @@ def register_hrc_commands(bot: Client):
             ),
             Option(
                 name='tags',
-                description='SuS Tag(s) (separate by comma)',
+                description='SuS Tag(s) (separate by comma, case sensitive)',
                 type=OptionType.STRING,
                 required=False
             )

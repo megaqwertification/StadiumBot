@@ -267,7 +267,7 @@ BTT_SUS_TAGS = {
     'OHO' : 'One Hand Only',
     '1T' : 'One Target (T10 of current WR)',
     '999%' : 'Attain 999% Damage and complete the stage',
-    'hookshot' : 'Hookshot only',
+    'zair' : 'Hookshot/grapple only',
     'misfire' : 'Misfire only (no code)',
     # 'Mismatch' : 'Char != Stage',
     'AR' : "Action Replay / Gecko Coded Runs",
@@ -275,6 +275,8 @@ BTT_SUS_TAGS = {
     'Riddle' : 'tbd',
     'Ledge Riddle' : 'tbd',
     'Riddle Glitchless' : 'tbd',
+    'FZI' : 'Fully Zoomed In',
+    'blindfolded' : 'Blindfolded run',
 
 
     # 'NCS BSS' # NCS is its own categore, make sure NCS runs dont get categorized with suicide runs or completions
