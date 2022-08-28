@@ -72,7 +72,7 @@ def register_hrc_commands(bot: Client):
 
         players_string = ", ".join(players)
 
-        wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {",".join(tags_list) + " " if tags_list else ""}- {score_ft}ft/{score_m}m by {players_string} at {video}'
+        wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score_ft}ft/{score_m}m by {players_string} at {video}'
         await ctx.send(wr_string)
     
     @bot.command(

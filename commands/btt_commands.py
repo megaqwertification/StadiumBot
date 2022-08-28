@@ -23,7 +23,7 @@ def register_btt_commands(bot: Client):
             ),
             Option(
                 name='stage',
-                description='stage',
+                description='stage (leave blank for vanilla)',
                 type=OptionType.STRING,
                 required=False
             ),
@@ -35,7 +35,7 @@ def register_btt_commands(bot: Client):
             ),
             Option(
                 name='tags',
-                description='SuS tags',
+                description='SuS tags (comma separated, case sensitive)',
                 type=OptionType.STRING,
                 required=False
             )
@@ -52,6 +52,7 @@ def register_btt_commands(bot: Client):
         # temp catch for sheik/zelda stage name
         if stage_name == 'Sheik':
             stage_name = 'Zelda'
+            original_stage_name = 'Sheik'
 
         is_TAS = kwargs.get('tas', False)
 
@@ -81,7 +82,7 @@ def register_btt_commands(bot: Client):
 
         players_string = ", ".join(players)
 
-        wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {",".join(tags_list) + " " if tags_list else ""}- {score} by {players_string} at {video}'
+        wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name if char_name != stage_name else ""} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
         await ctx.send(wr_string)
 
     @bot.command(
