@@ -28,6 +28,12 @@ def register_hrc_commands(bot: Client):
                 type=OptionType.BOOLEAN,
                 required=False
             ),
+            Option(
+                name='tags',
+                description='SuS Tag(s) (separate by comma)',
+                type=OptionType.STRING,
+                required=False
+            )
         ]
     )
     
