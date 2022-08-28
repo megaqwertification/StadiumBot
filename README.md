@@ -18,7 +18,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - recordcount command
 - sus/mismatch command verification
 - top 10 leaderboard per char
-- RTTF and EFB records
+- BTT RTTF and EFB records
 - NOT 2p-4p , I think that's better for a separate, larger database with its own functionality
 - Pipe dream: a website with more database functionality
 
