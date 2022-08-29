@@ -70,6 +70,37 @@ HRC_CHARACTERS = [
     "Sheik"
 ]
 
+BTT_CHARACTERS = [
+    "Dr. Mario",
+    "Mario",
+    "Luigi",
+    "Bowser",
+    "Peach",
+    "Yoshi",
+    "Donkey Kong",
+    "Captain Falcon",
+    "Ganondorf",
+    "Falco",
+    "Fox",
+    "Ness",
+    "Sopo",
+    "Ice Climbers",
+    "Kirby",
+    "Samus",
+    "Zelda/Sheik",
+    "Link",
+    "Young Link",
+    "Pichu",
+    "Pikachu",
+    "Jigglypuff",
+    "Mewtwo",
+    "Mr. Game & Watch",
+    "Marth",
+    "Roy",
+    "Zelda",
+    "Sheik"
+]
+
 BTT_STAGES = [
     "Dr. Mario",
     "Mario",
