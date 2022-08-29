@@ -55,7 +55,7 @@ def register_btt_commands(bot: Client):
 
         # catch all if "ICs" is only inputted for vanilla
         if kwargs.get('stage') == None and char_name == 'Ice Climbers':
-            char_name = 'Sopo'
+            char_name = 'Popo'
             stage_name = 'Ice Climbers'
         
         # temp catch for sheik/zelda stage name
@@ -64,7 +64,7 @@ def register_btt_commands(bot: Client):
             original_stage_name = 'Sheik'
 
         # Catch all if "Sopo" is only inputted for vanilla
-        if stage_name == 'Sopo':
+        if stage_name == 'Popo':
             stage_name = 'Ice Climbers'
 
         is_TAS = kwargs.get('tas', False)
