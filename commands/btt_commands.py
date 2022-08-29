@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, BTT_CHARACTERS, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from db import connect
@@ -45,7 +45,7 @@ def register_btt_commands(bot: Client):
     async def _btt_wr(ctx: CommandContext, **kwargs):
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
-        if char_name not in HRC_CHARACTERS:
+        if char_name not in BTT_CHARACTERS:
             raise ValueError(f'Please select a valid character')
 
 
@@ -62,7 +62,7 @@ def register_btt_commands(bot: Client):
         if stage_name == 'Sheik':
             stage_name = 'Zelda'
             original_stage_name = 'Sheik'
-            
+
         # Catch all if "Sopo" is only inputted for vanilla
         if stage_name == 'Sopo':
             stage_name = 'Ice Climbers'
