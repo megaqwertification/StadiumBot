@@ -83,7 +83,7 @@ BTT_CHARACTERS = [
     "Falco",
     "Fox",
     "Ness",
-    "Sopo",
+    "Popo",
     "Ice Climbers",
     "Kirby",
     "Samus",
