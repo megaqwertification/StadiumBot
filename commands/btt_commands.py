@@ -47,12 +47,25 @@ def register_btt_commands(bot: Client):
         char_name = get_char_name(char_input, ALIASES)
         if char_name not in HRC_CHARACTERS:
             raise ValueError(f'Please select a valid character')
+
+
+
         stage_input = kwargs.get('stage', char_name)
         stage_name = get_char_name(stage_input, ALIASES)
+
+        # catch all if "ICs" is only inputted for vanilla
+        if kwargs.get('stage') == None and char_name == 'Ice Climbers':
+            char_name = 'Sopo'
+            stage_name = 'Ice Climbers'
+        
         # temp catch for sheik/zelda stage name
         if stage_name == 'Sheik':
             stage_name = 'Zelda'
             original_stage_name = 'Sheik'
+            
+        # Catch all if "Sopo" is only inputted for vanilla
+        if stage_name == 'Sopo':
+            stage_name = 'Ice Climbers'
 
         is_TAS = kwargs.get('tas', False)
 
