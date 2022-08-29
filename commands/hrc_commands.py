@@ -5,7 +5,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import ALIASES, HRC_SUS_TAGS, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
 from formulas import m_to_ft, get_char_name
 
 from db import connect
@@ -47,6 +47,8 @@ def register_hrc_commands(bot: Client):
         # TODO: add error checking for SuS Tags
         sus_tags = kwargs.get("tags", None)
         tags_list = [tag.strip() for tag in sus_tags.split(',')] if sus_tags else []
+        if not set(tags_list).issubset(set(HRC_SUS_TAGS.keys())):
+            raise ValueError('One or more sus tags DNE')
 
         conn = connect()
         sql_q = f'SELECT * FROM hrc_table WHERE character=\'{char_name}\' AND tas={is_TAS} ORDER BY score_ft DESC, date ASC;'

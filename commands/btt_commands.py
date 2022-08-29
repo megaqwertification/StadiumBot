@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, BTT_STAGES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from db import connect
@@ -58,6 +58,8 @@ def register_btt_commands(bot: Client):
 
         sus_tags = kwargs.get('tags', [])
         tags_list = sus_tags.split(',') if sus_tags else []
+        if not set(tags_list).issubset(set(BTT_SUS_TAGS.keys())):
+            raise ValueError('One or more sus tags DNE')
 
         conn = connect()
         sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
