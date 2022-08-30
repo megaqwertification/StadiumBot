@@ -102,10 +102,13 @@ def register_owner_commands(bot: Client):
         # TODO: raise error if character isn't in database
         # TODO: allow for zelda and sheik individual records 
         if char not in HRC_CHARACTERS:
-            raise ValueError(f'Please select a valid character')
-        stage = kwargs.get('stage')
+            description = f'Please select a valid char ({char} invalid)'
+            await ctx.send(description, ephemeral=True)
+        stage_input = kwargs.get('stage')
+        stage = get_char_name(stage_input, ALIASES)
         if stage not in BTT_STAGES:
-            raise ValueError(f'Please select a valid stage')
+            description = f'Please select a valid stage ({stage} invalid)'
+            await ctx.send(description, ephemeral=True)
         player = kwargs.get("player")
         # TODO: have to raise some sort of exception if player doesn't exist.... in database table?
         
