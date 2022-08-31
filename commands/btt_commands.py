@@ -84,10 +84,10 @@ def register_btt_commands(bot: Client):
             cur = [record for record in cur if set(tags_list).issubset(record[9])]
 
         players = []
-        curr_score = 0
+        curr_score = 999
         video = None
         for record in cur:
-            if record[3] < curr_score:
+            if record[3] > curr_score:
                 break
             players.append(record[2])
             score = record[3]
@@ -183,3 +183,36 @@ def register_btt_commands(bot: Client):
         conn.close()
 
 
+    # @bot.command(
+    #     name='btt-wr-history',
+    #     description='Display the history of a BtT pairing (includes ties)',
+    #     scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+    #     options=[
+    #         Option(
+    #             name='character',
+    #             description='Choose your character',
+    #             type=OptionType.STRING,
+    #             required=True,
+    #         ),
+    #         Option(
+    #             name='stage',
+    #             description='stage (leave blank for vanilla)',
+    #             type=OptionType.STRING,
+    #             required=False
+    #         ),
+    #         Option(
+    #             name='tas',
+    #             description='default: RTA',
+    #             type=OptionType.BOOLEAN,
+    #             required=False,
+    #         ),
+    #         Option(
+    #             name='tags',
+    #             description='SuS tags (comma separated, case sensitive)',
+    #             type=OptionType.STRING,
+    #             required=False
+    #         )
+    #     ]   
+    # )        
+    # async def _btt_wr_history(ctx: CommandContext, **kwargs):
+    #     return None
