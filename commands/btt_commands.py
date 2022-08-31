@@ -186,7 +186,7 @@ def register_btt_commands(bot: Client):
     # @bot.command(
     #     name='btt-wr-history',
     #     description='Display the history of a BtT pairing (includes ties)',
-    #     scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+    #     scope=[PERSONAL_GUILD_ID],
     #     options=[
     #         Option(
     #             name='character',
@@ -206,13 +206,104 @@ def register_btt_commands(bot: Client):
     #             type=OptionType.BOOLEAN,
     #             required=False,
     #         ),
-    #         Option(
-    #             name='tags',
-    #             description='SuS tags (comma separated, case sensitive)',
-    #             type=OptionType.STRING,
-    #             required=False
-    #         )
+    #         # Option(
+    #         #     name='tags',
+    #         #     description='SuS tags (comma separated, case sensitive)',
+    #         #     type=OptionType.STRING,
+    #         #     required=False
+    #         # )
     #     ]   
     # )        
     # async def _btt_wr_history(ctx: CommandContext, **kwargs):
-    #     return None
+    #     char_input = kwargs.get("character")
+    #     char_name = get_char_name(char_input, ALIASES)
+    #     if char_name not in BTT_CHARACTERS:
+    #         raise ValueError(f'Please select a valid character')
+
+    #     stage_input = kwargs.get('stage', char_name)
+    #     stage_name = get_char_name(stage_input, ALIASES)
+
+    #     # catch all if "ICs" is only inputted for vanilla
+    #     if kwargs.get('stage') == None and char_name == 'Ice Climbers':
+    #         char_name = 'Popo'
+    #         stage_name = 'Ice Climbers'
+        
+    #     # temp catch for sheik/zelda stage name
+    #     if stage_name == 'Sheik':
+    #         stage_name = 'Zelda'
+    #         original_stage_name = 'Sheik'
+
+    #     # Catch all if "Sopo" is only inputted for vanilla
+    #     if stage_name == 'Popo':
+    #         stage_name = 'Ice Climbers'
+
+    #     is_TAS = kwargs.get('tas', False)
+
+    #     sus_tags = kwargs.get('tags', [])
+    #     tags_list = sus_tags.split(',') if sus_tags else []
+    #     if not set(tags_list).issubset(set(BTT_SUS_TAGS.keys())):
+    #         raise ValueError('One or more sus tags DNE')
+
+    #     conn = connect()
+    #     sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY date ASC;'
+    #     cur = conn.cursor()
+    #     cur.execute(sql_q)
+
+
+
+
+    #     description_lines = []
+    #     prev_score = 999
+
+    #     for record in cur:
+    #         sources = record[4]
+    #         if len(sources) != 0:
+    #             video = sources[0] 
+    #         else:
+    #             video = None
+    #         tied_player = None
+    #         player = record[2]
+    #         score = record[3]
+    #         if score > prev_score:
+    #             continue
+    #         prev_score = score
+    #         date = record[5].date()
+    #         if video == None:
+    #             description_lines.append(
+    #                 f'({date}) - {score} - {player}'
+    #             )
+    #         else:
+    #             description_lines.append(
+    #                 f'({date}) - [{score}]({video}) - {player}'
+    #             )
+    #         # have to think about ties with Debug vs non debug, since they'll be same # of frames but diff displayed time
+            
+    #         # i do not think this does anything
+    #         if tied_player != None:
+    #            description_lines.pop()
+    #            description_lines[-1] += f', {tied_player}'
+    #            # SCUFFED. I AM A SCUFFED PROGRAMMER :happysquare:
+    #            #description_lines[-1] = description_lines[0:-13] + f', {tied_player}' + description_lines[-13::]
+    #         tied_player = None
+        
+    #     #     )
+
+    #     description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name}/{stage_name} BTT WRs (YYYY/MM/DD)\n')
+    #     # reverse list
+    #     description_lines.reverse()
+
+    #     # add to front of list
+    #     #description_lines.insert(0, f"History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n")
+
+    #     #print(description_lines)
+        
+    #     # TODO: handle vanilla and mm history sheet appending
+    #     #if char_name:
+    #     #   description_lines.append(f'\n [Full BTT RTA History Sheet](https://docs.google.com/spreadsheets/d/1oenxMdKsnD9uppK01fPtp4dD6jpqYMv4w2DKXI6plqE/edit#gid=0)')
+        
+
+    #     await embeds.send_embeds(description_lines, ctx)
+        
+
+    #     cur.close()
+    #     conn.close()

@@ -22,7 +22,7 @@ def register_owner_commands(bot: Client):
     @bot.command(
         name='add-btt-record',
         description='Add BTT record',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID], #, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='character',
@@ -93,10 +93,12 @@ def register_owner_commands(bot: Client):
             ),
         ],
 
-        default_member_permissions=Permissions.ADMINISTRATOR    
+        #default_member_permissions=Permissions.ADMINISTRATOR    
     )
 
     async def _add_btt_record(ctx: CommandContext, **kwargs):
+        if ctx.author.id != str(199563168345882624):
+            return None
         char_input = kwargs.get("character")
         char = get_char_name(char_input, ALIASES)
         # TODO: raise error if character isn't in database
