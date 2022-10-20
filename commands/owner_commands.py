@@ -22,7 +22,7 @@ def register_owner_commands(bot: Client):
     @bot.command(
         name='add-btt-record',
         description='Add BTT record',
-        scope=[PERSONAL_GUILD_ID], #, STADIUM_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='character',
@@ -98,6 +98,8 @@ def register_owner_commands(bot: Client):
 
     async def _add_btt_record(ctx: CommandContext, **kwargs):
         if ctx.author.id != str(199563168345882624):
+            description = f'Unauthorized use of command, only the bot owner can add records'
+            await ctx.send(description, ephemeral=True)
             return None
         char_input = kwargs.get("character")
         char = get_char_name(char_input, ALIASES)
@@ -106,15 +108,16 @@ def register_owner_commands(bot: Client):
         if char not in HRC_CHARACTERS:
             description = f'Please select a valid char ({char} invalid)'
             await ctx.send(description, ephemeral=True)
-        stage_input = kwargs.get('stage')
-        stage = get_char_name(stage_input, ALIASES)
+
+        stage = kwargs.get('stage')
         if stage not in BTT_STAGES:
             description = f'Please select a valid stage ({stage} invalid)'
             await ctx.send(description, ephemeral=True)
         player = kwargs.get("player")
         # TODO: have to raise some sort of exception if player doesn't exist.... in database table?
         
-        score = kwargs.get("score")
+        score = kwargs.get("score") # if score m isn't given or something
+
 
         sources = kwargs.get('sources', '') 
         # TODO: add check_source function and update source function
@@ -131,9 +134,17 @@ def register_owner_commands(bot: Client):
         ver = kwargs.get('ver', '')
         # TODO: add regex for all of these (e.g. match NTSC1.02 with ntsc1.02 with NTSC 1.02 etc.)
         if ver not in VERSIONS:
-            raise ValueError(f'Please select a valid version')
+            description = f'Please select a valid version ({ver} invalid)'
+            await ctx.send(description, ephemeral=True)
         
         score_str = '{:.2f}'.format(score)
+        # TODO: raise exceptions
+        # TODO: check if already in the database by comparing char, player, score_ft, score_m, and ver... and emu?? let's add this functionality later
+        # TODO: check if you're adding a new source 
+        # TODO: if exists, update source and other null values using pqsl UPDATE
+        # TODO: check if it's a tie (actually dont have to if you properly implement the hrc commands)
+        # TODO: if tas, has to be equal to or greater than RTA, actually no bcs wak's old link TAS is worse than RTA
+        # so maybe compare dates idk. unless an RTA record is maxed , 
 
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
@@ -143,10 +154,13 @@ def register_owner_commands(bot: Client):
         cur = conn.cursor()
         cur.execute(sql_q)
 
+        # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
+        # TODO: test datetime values
 
         video = sources.split(',')[0]
         conn.commit()
-        description = f'Added BTT record: {char}/{stage} - {score_str} by {player} at <{video}>'
+        # TODO: update desc if it needs tags or something
+        description = f'Added BTT {"TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}>'
         await ctx.send(description)
 
 
