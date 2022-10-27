@@ -98,7 +98,12 @@ BTT_CHARACTERS = [
     "Marth",
     "Roy",
     "Zelda",
-    "Sheik"
+    "Sheik",    
+    "Male Wireframe",
+    "Female Wireframe",
+    "Giga Bowser",
+    "Master Hand",
+    "Crazy Hand"
 ]
 
 BTT_STAGES = [
