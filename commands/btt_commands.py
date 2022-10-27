@@ -54,6 +54,10 @@ def register_btt_commands(bot: Client):
 
         stage_input = kwargs.get('stage', char_name)
         stage_name = get_char_name(stage_input, ALIASES)
+        # if stage_name not in BTT_CHARACTERS:
+        #     description = f'Please select a valid stage'
+        #     await ctx.send(description, ephemeral=True)
+        #     return None
 
         # catch all if "ICs" is only inputted for vanilla
         if kwargs.get('stage') == None and char_name == 'Ice Climbers':
@@ -185,127 +189,136 @@ def register_btt_commands(bot: Client):
         conn.close()
 
 
-    # @bot.command(
-    #     name='btt-wr-history',
-    #     description='Display the history of a BtT pairing (includes ties)',
-    #     scope=[PERSONAL_GUILD_ID],
-    #     options=[
-    #         Option(
-    #             name='character',
-    #             description='Choose your character',
-    #             type=OptionType.STRING,
-    #             required=True,
-    #         ),
-    #         Option(
-    #             name='stage',
-    #             description='stage (leave blank for vanilla)',
-    #             type=OptionType.STRING,
-    #             required=False
-    #         ),
-    #         Option(
-    #             name='tas',
-    #             description='default: RTA',
-    #             type=OptionType.BOOLEAN,
-    #             required=False,
-    #         ),
-    #         # Option(
-    #         #     name='tags',
-    #         #     description='SuS tags (comma separated, case sensitive)',
-    #         #     type=OptionType.STRING,
-    #         #     required=False
-    #         # )
-    #     ]   
-    # )        
-    # async def _btt_wr_history(ctx: CommandContext, **kwargs):
-    #     char_input = kwargs.get("character")
-    #     char_name = get_char_name(char_input, ALIASES)
-    #     if char_name not in BTT_CHARACTERS:
-    #         raise ValueError(f'Please select a valid character')
+    @bot.command(
+        name='btt-wr-history',
+        description='Display the history of a BtT pairing (includes ties)',
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        options=[
+            Option(
+                name='character',
+                description='Choose your character',
+                type=OptionType.STRING,
+                required=True,
+            ),
+            Option(
+                name='stage',
+                description='stage (leave blank for vanilla)',
+                type=OptionType.STRING,
+                required=False
+            ),
+            Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            ),
+            # Option(
+            #     name='tags',
+            #     description='SuS tags (comma separated, case sensitive)',
+            #     type=OptionType.STRING,
+            #     required=False
+            # )
+        ]   
+    )        
+    async def _btt_wr_history(ctx: CommandContext, **kwargs):
+        char_input = kwargs.get("character")
+        char_name = get_char_name(char_input, ALIASES)
+        if char_name not in BTT_CHARACTERS:
+            description = f'Please select a valid character'
+            await ctx.send(description, ephemeral=True)
+            return None
 
-    #     stage_input = kwargs.get('stage', char_name)
-    #     stage_name = get_char_name(stage_input, ALIASES)
+        stage_input = kwargs.get('stage', char_name)
+        stage_name = get_char_name(stage_input, ALIASES)
+        if stage_name not in BTT_STAGES:
+            description = f'Please select a valid stage'
+            await ctx.send(description, ephemeral=True)
+            return None
 
-    #     # catch all if "ICs" is only inputted for vanilla
-    #     if kwargs.get('stage') == None and char_name == 'Ice Climbers':
-    #         char_name = 'Popo'
-    #         stage_name = 'Ice Climbers'
+        # catch all if "ICs" is only inputted for vanilla
+        if kwargs.get('stage') == None and char_name == 'Ice Climbers':
+            char_name = 'Popo'
+            stage_name = 'Ice Climbers'
         
-    #     # temp catch for sheik/zelda stage name
-    #     if stage_name == 'Sheik':
-    #         stage_name = 'Zelda'
-    #         original_stage_name = 'Sheik'
+        # temp catch for sheik/zelda stage name
+        if stage_name == 'Sheik':
+            stage_name = 'Zelda'
+            original_stage_name = 'Sheik'
 
-    #     # Catch all if "Sopo" is only inputted for vanilla
-    #     if stage_name == 'Popo':
-    #         stage_name = 'Ice Climbers'
+        # Catch all if "Sopo" is only inputted for vanilla
+        if stage_name == 'Popo':
+            stage_name = 'Ice Climbers'
 
-    #     is_TAS = kwargs.get('tas', False)
+        is_TAS = kwargs.get('tas', False)
 
-    #     sus_tags = kwargs.get('tags', [])
-    #     tags_list = sus_tags.split(',') if sus_tags else []
-    #     if not set(tags_list).issubset(set(BTT_SUS_TAGS.keys())):
-    #         raise ValueError('One or more sus tags DNE')
+        sus_tags = kwargs.get('tags', [])
+        tags_list = sus_tags.split(',') if sus_tags else []
+        if not set(tags_list).issubset(set(BTT_SUS_TAGS.keys())):
+            raise ValueError('One or more sus tags DNE')
 
-    #     conn = connect()
-    #     sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY date ASC;'
-    #     cur = conn.cursor()
-    #     cur.execute(sql_q)
+        conn = connect()
+        sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY date ASC;'
+        cur = conn.cursor()
+        cur.execute(sql_q)
+
+        if cur.rowcount == 0:
+            description='Sorry, DB not filled out yet or record DNE. Please ping mega if you think there is an error'
+            await ctx.send(description, ephemeral=True)
+            return None
 
 
+        description_lines = []
+        prev_score = 999
 
-
-    #     description_lines = []
-    #     prev_score = 999
-
-    #     for record in cur:
-    #         sources = record[4]
-    #         if len(sources) != 0:
-    #             video = sources[0] 
-    #         else:
-    #             video = None
-    #         tied_player = None
-    #         player = record[2]
-    #         score = record[3]
-    #         if score > prev_score:
-    #             continue
-    #         prev_score = score
-    #         date = record[5].date()
-    #         if video == None:
-    #             description_lines.append(
-    #                 f'({date}) - {score} - {player}'
-    #             )
-    #         else:
-    #             description_lines.append(
-    #                 f'({date}) - [{score}]({video}) - {player}'
-    #             )
-    #         # have to think about ties with Debug vs non debug, since they'll be same # of frames but diff displayed time
+        for record in cur:
+            sources = record[4]
+            if len(sources) != 0:
+                video = sources[0] 
+            else:
+                video = None
+            tied_player = None
+            player = record[2]
+            score = record[3]
+            if score > prev_score:
+                continue
+            prev_score = score
+            date = record[5].date()
+            if video == None:
+                description_lines.append(
+                    f'({date}) - {score} - {player}'
+                )
+            else:
+                description_lines.append(
+                    f'({date}) - [{score}]({video}) - {player}'
+                )
+            # have to think about ties with Debug vs non debug, since they'll be same # of frames but diff displayed time
             
-    #         # i do not think this does anything
-    #         if tied_player != None:
-    #            description_lines.pop()
-    #            description_lines[-1] += f', {tied_player}'
-    #            # SCUFFED. I AM A SCUFFED PROGRAMMER :happysquare:
-    #            #description_lines[-1] = description_lines[0:-13] + f', {tied_player}' + description_lines[-13::]
-    #         tied_player = None
+            # i do not think this does anything
+            if tied_player != None:
+               description_lines.pop()
+               description_lines[-1] += f', {tied_player}'
+               # SCUFFED. I AM A SCUFFED PROGRAMMER :happysquare:
+               #description_lines[-1] = description_lines[0:-13] + f', {tied_player}' + description_lines[-13::]
+            tied_player = None
         
-    #     #     )
+        #     )
 
-    #     description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name}/{stage_name} BTT WRs (YYYY/MM/DD)\n')
-    #     # reverse list
-    #     description_lines.reverse()
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name}/{stage_name} BTT WRs (YYYY/MM/DD)\n')
+        # reverse list
+        description_lines.reverse()
 
-    #     # add to front of list
-    #     #description_lines.insert(0, f"History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n")
+        # add to front of list
+        #description_lines.insert(0, f"History of {char_name} HRC WRs (ft/m) (YYYY/MM/DD)\n")
 
-    #     #print(description_lines)
+        #print(description_lines)
         
-    #     # TODO: handle vanilla and mm history sheet appending
-    #     #if char_name:
-    #     #   description_lines.append(f'\n [Full BTT RTA History Sheet](https://docs.google.com/spreadsheets/d/1oenxMdKsnD9uppK01fPtp4dD6jpqYMv4w2DKXI6plqE/edit#gid=0)')
-        
-
-    #     await embeds.send_embeds(description_lines, ctx)
+        # TODO: handle vanilla and mm history sheet appending
+        #if char_name:
+        #   description_lines.append(f'\n [Full BTT RTA History Sheet](https://docs.google.com/spreadsheets/d/1oenxMdKsnD9uppK01fPtp4dD6jpqYMv4w2DKXI6plqE/edit#gid=0)')
         
 
-    #     cur.close()
-    #     conn.close()
+        await embeds.send_embeds(description_lines, ctx)
+        
+
+        cur.close()
+        conn.close()
