@@ -46,7 +46,9 @@ def register_btt_commands(bot: Client):
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
         if char_name not in BTT_CHARACTERS:
-            raise ValueError(f'Please select a valid character')
+            description = f'Please select a valid character'
+            await ctx.send(description, ephemeral=True)
+            return None
 
 
 

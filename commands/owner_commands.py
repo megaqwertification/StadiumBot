@@ -3,7 +3,7 @@ from formulas import get_char_name
 
 from db import connect
 
-from interactions import Client, CommandContext, Permissions, Option, OptionType
+from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
 
 # TODO: verify insertions are valid. eg. make sure it's ntsc1.02 and not ntsc 1.02
 # can cross-ref with constants
@@ -89,6 +89,24 @@ def register_owner_commands(bot: Client):
                 name='ver',
                 description='version',
                 type=OptionType.STRING,
+                choices=[
+                    Choice(
+                        name='NTSC1.02',
+                        value='NTSC1.02',
+                    ),
+                    Choice(
+                        name='PAL',
+                        value='PAL',
+                    ),
+                    Choice(
+                        name='NTSC1.00',
+                        value='NTSC1.00',
+                    ),
+                    Choice(
+                        name='NTSC1.01',
+                        value='NTSC1.01',
+                    ),
+                ],
                 required=False,                
             ),
         ],
@@ -108,11 +126,14 @@ def register_owner_commands(bot: Client):
         if char not in HRC_CHARACTERS:
             description = f'Please select a valid char ({char} invalid)'
             await ctx.send(description, ephemeral=True)
+            return None
 
-        stage = kwargs.get('stage')
+        stage_input = kwargs.get('stage')
+        stage = get_char_name(stage_input, ALIASES)
         if stage not in BTT_STAGES:
             description = f'Please select a valid stage ({stage} invalid)'
             await ctx.send(description, ephemeral=True)
+            return None
         player = kwargs.get("player")
         # TODO: have to raise some sort of exception if player doesn't exist.... in database table?
         
@@ -131,11 +152,7 @@ def register_owner_commands(bot: Client):
         tags = kwargs.get('tags', '') 
         # TODO: make a check tags function and update tags function
 
-        ver = kwargs.get('ver', '')
-        # TODO: add regex for all of these (e.g. match NTSC1.02 with ntsc1.02 with NTSC 1.02 etc.)
-        if ver not in VERSIONS:
-            description = f'Please select a valid version ({ver} invalid)'
-            await ctx.send(description, ephemeral=True)
+        ver = kwargs.get('ver', 'NTSC1.02')
         
         score_str = '{:.2f}'.format(score)
         # TODO: raise exceptions
