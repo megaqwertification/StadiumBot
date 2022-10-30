@@ -303,7 +303,7 @@ def register_btt_commands(bot: Client):
         
         #     )
 
-        description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name}/{stage_name} BTT WRs (YYYY/MM/DD)\n')
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name}/{stage_name} BTT WRs (YYYY-MM-DD)\n')
         # reverse list
         description_lines.reverse()
 
