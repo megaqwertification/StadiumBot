@@ -14,7 +14,7 @@ def register_general_commands(bot: Client):
     @bot.command(
         name='random',
         description='Query a random record',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='mode',
