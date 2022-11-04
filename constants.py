@@ -70,6 +70,7 @@ HRC_CHARACTERS = [
     "Sheik"
 ]
 
+# have to fix zelda/sheik, maybe move to bottom
 BTT_CHARACTERS = [
     "Dr. Mario",
     "Mario",
