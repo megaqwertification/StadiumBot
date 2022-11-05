@@ -63,19 +63,19 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='tas',
-                description='tas',
+                description='tas (default False)',
                 type=OptionType.BOOLEAN,
                 required=False,                
             ),
             Option(
                 name='emulator',
-                description='Played on emu',
+                description='Played on emu (default True)',
                 type=OptionType.BOOLEAN,
                 required=False,                
             ),
             Option(
                 name='debug',
-                description='Played on debug',
+                description='Played on debug (default False)',
                 type=OptionType.BOOLEAN,
                 required=False,                
             ),
@@ -87,7 +87,7 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='ver',
-                description='version',
+                description='version (default NTSC1.02)',
                 type=OptionType.STRING,
                 choices=[
                     Choice(
@@ -177,7 +177,7 @@ def register_owner_commands(bot: Client):
         video = sources.split(',')[0]
         conn.commit()
         # TODO: update desc if it needs tags or something
-        description = f'Added BTT {"TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}>'
+        description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}>'
         await ctx.send(description)
 
 
