@@ -1,4 +1,4 @@
-from constants import HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID, VERSIONS, ALIASES, BTT_STAGES
+from constants import BTT_CHARACTERS, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID, VERSIONS, ALIASES, BTT_STAGES
 from formulas import get_char_name
 
 from db import connect
@@ -123,7 +123,7 @@ def register_owner_commands(bot: Client):
         char = get_char_name(char_input, ALIASES)
         # TODO: raise error if character isn't in database
         # TODO: allow for zelda and sheik individual records 
-        if char not in HRC_CHARACTERS:
+        if char not in BTT_CHARACTERS:
             description = f'Please select a valid char ({char} invalid)'
             await ctx.send(description, ephemeral=True)
             return None
