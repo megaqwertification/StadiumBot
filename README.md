@@ -24,3 +24,14 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - Pipe dream: a website with more database functionality
 
 *idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands.
+
+# Current checklist
+- [ ] Populate Vanilla RTA & TAS runs
+- [ ] Enable history commands
+- [ ] Allow add command to check if run already exists
+- [ ] Create google form for ALL run submissions, crowdsource help to fill the database
+- [ ] Create file which imports CSV and adds the runs
+- [ ] Create website for people to filter runs to see all information
+- [ ] Allow people to verify runs (tags, version, etc.)
+- [ ] overhaul database to something better, migrate if heroku cost is too much
+- [ ] Create a way for people to download runs as vids, be it a script or torrent file
