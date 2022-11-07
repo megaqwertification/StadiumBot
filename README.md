@@ -13,17 +13,16 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - Stadium Discord - Too many google sheets even though i dont want this to be the defacto tracker of things. just a tool to access things quickly
 
 # IDEAS / TODO*:
-- Add character regex
-- view_record command (not priority, but still doable)
+- view_record command for arbitrary record (not priority, but still doable)
 - recordcount command
 - sus/mismatch command verification
-- Add sus tags (and error-checking) for all mode WR list commands, all mode WR history commands, and individual WR query commands (except HRC)
+- Add sus tags (and error-checking) for all mode WR list commands, all mode WR history commands, and individual WR query commands
 - top 10 leaderboard per char
 - BTT RTTF and EFB records
 - NOT 2p-4p , I think that's better for a separate, larger database with its own functionality
 - Pipe dream: a website with more database functionality
 
-*idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands.
+*idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands. Please make a feature request under github issues for an rquest
 
 # Current checklist
 - [ ] Populate Vanilla RTA & TAS runs
