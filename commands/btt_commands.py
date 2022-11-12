@@ -99,6 +99,17 @@ def register_btt_commands(bot: Client):
             cur = [record for record in cur if not set(['misfire']).issubset(record[9])]
         if 'AR' not in tags_list:
             cur = [record for record in cur if not set(['AR']).issubset(record[9])]
+        # more temporary filtering, probably a more efficient way to do things
+        if 'LSS' not in tags_list:
+            cur = [record for record in cur if not set(['LSS']).issubset(record[9])]
+        if 'BSS' not in tags_list:
+            cur = [record for record in cur if not set(['BSS']).issubset(record[9])]
+        if 'RSS' not in tags_list:
+            cur = [record for record in cur if not set(['RSS']).issubset(record[9])]
+        if 'TSS' not in tags_list:
+            cur = [record for record in cur if not set(['TSS']).issubset(record[9])]
+
+
 
         if len(cur) == 0:
             description = f'Run DNE or not in database. Let mega know if this is a mistake'
