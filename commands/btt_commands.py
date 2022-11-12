@@ -78,7 +78,9 @@ def register_btt_commands(bot: Client):
         sus_tags = kwargs.get('tags', [])
         tags_list = sus_tags.split(',') if sus_tags else []
         if not set(tags_list).issubset(set(BTT_SUS_TAGS.keys())):
-            raise ValueError('One or more sus tags DNE')
+            description = f'Please select a valid SuS tag (case sensitive for now)'
+            await ctx.send(description, ephemeral=True)
+            return None
 
         conn = connect()
         sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
@@ -88,6 +90,20 @@ def register_btt_commands(bot: Client):
         # pre-processing for sus tags
         if tags_list:
             cur = [record for record in cur if set(tags_list).issubset(record[9])]
+
+        # filter out 1T tag or sub-10 target tags
+        # Temp if conditions, need to make it better
+        if '1T' not in tags_list:
+            cur = [record for record in cur if not set(['1T']).issubset(record[9])]
+        if 'misfire' not in tags_list and char_name == 'Luigi': # or 'misfire' not in tags_list or 'AR' not in tags_list:
+            cur = [record for record in cur if not set(['misfire']).issubset(record[9])]
+        if 'AR' not in tags_list:
+            cur = [record for record in cur if not set(['AR']).issubset(record[9])]
+
+        if len(cur) == 0:
+            description = f'Run DNE or not in database. Let mega know if this is a mistake'
+            await ctx.send(description, ephemeral=True)
+            return None
 
         players = []
         curr_score = 999
@@ -131,6 +147,8 @@ def register_btt_commands(bot: Client):
         
         conn = connect()
         cur = conn.cursor()
+        # TODO: add option for specific char or stage
+        # should be doable and keep the code clean
 
         for stage in BTT_STAGES[:-1]:
             # query each stage's WR
