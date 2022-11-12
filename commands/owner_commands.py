@@ -185,7 +185,7 @@ def register_owner_commands(bot: Client):
     @bot.command(
         name='add-hrc-record',
         description='Add HRC record',
-        scope=[PERSONAL_GUILD_ID],
+        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
         options=[
             Option(
                 name='character',
