@@ -331,5 +331,166 @@ def register_owner_commands(bot: Client):
         # TODO: update desc if it needs tags or something
         description = f'Added HRC{" TAS" if is_tas else ""} record: {char} - {score_ft_str}ft/{score_m_str}m by {player} at <{video}> ({tags})'
         await ctx.send(description)
+    
+    
     # add 10mm record
-    # add event record
+    
+
+    @bot.command(
+        name='add-event-record',
+        description='Add HRC record',
+        scope=[PERSONAL_GUILD_ID],
+        options=[
+            Option(
+                name='event-id',
+                description='Choose event ID',
+                type=OptionType.NUMBER,
+                required=True,
+            ),
+            Option(
+                name='player',
+                description='Player',
+                type=OptionType.STRING,
+                required=True,
+            ),
+            # require at least one of the two
+            Option(
+                name='type',
+                description='timed or scored',
+                type=OptionType.STRING,
+                choices=[
+                    Choice(
+                        name='timed',
+                        value='timed',
+                    ),
+                    Choice(
+                        name='scored',
+                        value='scored',
+                    ),
+                ],
+                required=True,                
+            ),
+            Option(
+                name='score',
+                description='Score decimal for timed, int for KOs',
+                type=OptionType.NUMBER,
+                required=True,                
+            ),
+            Option(
+                name='sources',
+                description='sources',
+                type=OptionType.STRING,
+                required=False,                
+            ),
+            Option(
+                name='date',
+                description='yyyy-mm-dd',
+                type=OptionType.STRING,
+                required=False,                
+            ),
+            Option(
+                name='tas',
+                description='tas (default False)',
+                type=OptionType.BOOLEAN,
+                required=False,                
+            ),
+            Option(
+                name='emulator',
+                description='Played on emu (default True)',
+                type=OptionType.BOOLEAN,
+                required=False,                
+            ),
+            Option(
+                name='tags',
+                description='add tags (case sensitive, CSV)',
+                type=OptionType.STRING,
+                required=False,                
+            ),
+            Option(
+                name='ver',
+                description='version (default NTSC1.02)',
+                type=OptionType.STRING,
+                choices=[
+                    Choice(
+                        name='NTSC1.02',
+                        value='NTSC1.02',
+                    ),
+                    Choice(
+                        name='PAL',
+                        value='PAL',
+                    ),
+                    Choice(
+                        name='NTSC1.00',
+                        value='NTSC1.00',
+                    ),
+                    Choice(
+                        name='NTSC1.01',
+                        value='NTSC1.01',
+                    ),
+                ],
+                required=False,                
+            ),
+        ],
+
+        #default_member_permissions=Permissions.ADMINISTRATOR    
+    )
+
+    async def _add_event_record(ctx: CommandContext, **kwargs):
+        if ctx.author.id != str(199563168345882624):
+            description = f'Unauthorized use of command, only the bot owner can add records'
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        event_id = int(kwargs.get('event-id'))
+        if event_id not in range(1,52):
+            description = f'Please select a valid event ID'
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        player = kwargs.get("player")
+        # TODO: have to raise some sort of exception if player doesn't exist.... in database table?
+        
+        event_type = kwargs.get("type")
+        score = kwargs.get("score")
+        if event_type == 'scored':
+            score = int(score)
+
+        sources = kwargs.get('sources', '') 
+        # TODO: add check_source function and update source function
+        
+        date = kwargs.get('date', '') # default system time so it auto corrects to UTC+00:00, when you're submitting. otherwise unknown
+        # TODO: add check_date function
+
+        is_tas = kwargs.get('tas', False)
+        is_emulator = kwargs.get('emulator', True)
+        tags = kwargs.get('tags', '') 
+        # TODO: make a check tags function and update tags function
+
+        ver = kwargs.get('ver', 'NTSC1.02')
+        
+
+
+        # TODO: raise exceptions
+        # TODO: check if already in the database by comparing char, player, score_ft, score_m, and ver... and emu?? let's add this functionality later
+        # TODO: check if you're adding a new source 
+        # TODO: if exists, update source and other null values using pqsl UPDATE
+        # TODO: check if it's a tie (actually dont have to if you properly implement the hrc commands)
+        # TODO: if tas, has to be equal to or greater than RTA, actually no bcs wak's old link TAS is worse than RTA
+        # so maybe compare dates idk. unless an RTA record is maxed , 
+
+        sources_str = "{" + sources + "}"
+        tags_str = "{" + tags + "}"
+
+        conn = connect()
+        sql_q = f"INSERT INTO event_table VALUES({event_id}, '{player}', '{event_type}', {score}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
+        cur = conn.cursor()
+        cur.execute(sql_q)
+
+        # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
+        # TODO: test datetime values
+
+        video = sources.split(',')[0]
+        conn.commit()
+        # TODO: update desc if it needs tags or something
+        description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""} by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
+        await ctx.send(description)
