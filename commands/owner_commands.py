@@ -454,6 +454,8 @@ def register_owner_commands(bot: Client):
         score = kwargs.get("score")
         if event_type == 'scored':
             score = int(score)
+        else:
+            score = '{:.2f}'.format(score)
 
         sources = kwargs.get('sources', '') 
         # TODO: add check_source function and update source function
@@ -492,5 +494,5 @@ def register_owner_commands(bot: Client):
         video = sources.split(',')[0]
         conn.commit()
         # TODO: update desc if it needs tags or something
-        description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""} by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
+        description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""}by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
         await ctx.send(description)
