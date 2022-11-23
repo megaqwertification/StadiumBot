@@ -124,7 +124,11 @@ def register_btt_commands(bot: Client):
                 break
             players.append(record[2])
             score = record[3]
-            video = record[4][0] if video == None else video # what if no video for any record?
+            video = record[4] if video == None else video # what if no video for any record?
+
+            # Temp post check
+            if len(video) != 0:
+                video = video[0]
 
             curr_score = score
 
