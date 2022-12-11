@@ -174,9 +174,9 @@ def register_event_commands(bot: Client):
         totals_str = f'\nTotal Time/KOs: [{total_time}/{event_KO_sum} KOs]({"https://www.youtube.com/playlist?list=PLRSZTIKPRRKT46gHOHtlY3oQQrSzvmJ5I" if is_TAS else "https://www.youtube.com/playlist?list=PLRSZTIKPRRKS-tQnuNrQggYtbvXnUm4j6"})'
         description_lines.append(totals_str)
 
-        if original_is_TAS:
-            tas_disclaimer = f'RTA is shown in the list if it beats TAS'
-            description_lines.append(tas_disclaimer)
+        # if original_is_TAS:
+        #     tas_disclaimer = f'RTA is shown in the list if it beats TAS'
+        #     description_lines.append(tas_disclaimer)
 
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
