@@ -70,8 +70,8 @@ def register_general_commands(bot: Client):
 
                 players_string = ", ".join(players)
 
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name if char_name != stage_name else ""} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
                 await ctx.send(wr_string)
             else:
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name if char_name != stage_name else ""} {"(" + ",".join(tags_list) + ") " if tags_list else ""}'
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}'
                 await ctx.send(wr_string)
