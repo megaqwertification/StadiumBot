@@ -126,12 +126,12 @@ def register_btt_commands(bot: Client):
             score = record[3]
             video = record[4] if video == None else video # what if no video for any record?
 
-            # Temp post check
-            if len(video) != 0:
-                video = video[0]
-
             curr_score = score
 
+        # Temp post check
+        if len(video) != 0:
+            video = video[0]
+            
         players_string = ", ".join(players)
 
         wr_string = f'{"(TAS)" if is_TAS else ""} {char_name}/{stage_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
