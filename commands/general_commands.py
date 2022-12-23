@@ -27,12 +27,19 @@ def register_general_commands(bot: Client):
                     )
                 ],
                 required=True,
+            ),
+            Option(
+                name='sus',
+                description='Query a random SuS record',
+                type=OptionType.BOOLEAN,
+                required=False,
             )
         ] 
     )
 
     async def _random(ctx: CommandContext, mode: str = 'btt', **kwargs):
-
+        is_SuS = kwargs.get('sus', False)
+        
         if mode == 'btt':
             char_name = random.choice(BTT_CHARACTERS) 
             #char_name = 'Zelda/Sheik'
@@ -50,8 +57,25 @@ def register_general_commands(bot: Client):
             cur = conn.cursor()
             cur.execute(sql_q)
 
-
-            cur = [record for record in cur if set(tags_list).issubset(record[9])]
+            if is_SuS:
+                cur = [record for record in cur if set(tags_list).issubset(record[9])]
+            else:
+                # Temp if conditions, need to make it better or make a general helper function that includes riddle
+                if '1T' not in tags_list:
+                    cur = [record for record in cur if not set(['1T']).issubset(record[9])]
+                if 'misfire' not in tags_list and char_name == 'Luigi': # or 'misfire' not in tags_list or 'AR' not in tags_list:
+                    cur = [record for record in cur if not set(['misfire']).issubset(record[9])]
+                if 'AR' not in tags_list:
+                    cur = [record for record in cur if not set(['AR']).issubset(record[9])]
+                # more temporary filtering, probably a more efficient way to do things
+                if 'LSS' not in tags_list:
+                    cur = [record for record in cur if not set(['LSS']).issubset(record[9])]
+                if 'BSS' not in tags_list:
+                    cur = [record for record in cur if not set(['BSS']).issubset(record[9])]
+                if 'RSS' not in tags_list:
+                    cur = [record for record in cur if not set(['RSS']).issubset(record[9])]
+                if 'TSS' not in tags_list:
+                    cur = [record for record in cur if not set(['TSS']).issubset(record[9])]
 
             # get the record, now pick a random one from this list....but it should pick out the record.....
             # if there's no video (i.e. red square... what do?)
@@ -70,8 +94,8 @@ def register_general_commands(bot: Client):
 
                 players_string = ", ".join(players)
 
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [""] else ""}- {score} by {players_string} at {video}'
                 await ctx.send(wr_string)
             else:
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list else ""}'
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [""] else ""}'
                 await ctx.send(wr_string)
