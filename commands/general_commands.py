@@ -48,7 +48,10 @@ def register_general_commands(bot: Client):
                 char_name = random.choice(['Zelda', 'Sheik'])
             stage_name = random.choice(BTT_STAGES)
             is_TAS = random.choice([True, False])
-            tags_list = [random.choice(list(BTT_SUS_TAGS.keys()) + [''])]
+            if is_SuS:
+                tags_list = [random.choice(list(BTT_SUS_TAGS.keys()) + [''])]
+            else:
+                tags_list = ['']
             # Need to get ANY random record with this tag in its tag list
 
             # same logic from WR query, needs to be cleaned up
