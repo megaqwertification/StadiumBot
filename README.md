@@ -25,8 +25,8 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 *idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands. Please make a feature request under github issues for an rquest
 
 # Current checklist
-- [ ] Populate Vanilla RTA & TAS runs
-- [ ] Enable history commands
+- [x] Populate Vanilla RTA & TAS runs
+- [x] Enable history commands
 - [ ] Allow add command to check if run already exists
 - [ ] Create google form for ALL run submissions, crowdsource help to fill the database. Check your youtube playlists + other saved resources
 - [ ] Continue mm history work where you left off, should be easier to do from that point
