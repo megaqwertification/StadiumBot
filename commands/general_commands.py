@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import ALIASES, BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS, HRC_CHARACTERS, GUILD_IDS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from db import connect
@@ -14,7 +14,7 @@ def register_general_commands(bot: Client):
     @bot.command(
         name='random',
         description='Query a random record',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='mode',
@@ -92,7 +92,7 @@ def register_general_commands(bot: Client):
                     players.append(record[2])
                     score = record[3]
                     video = record[4][0] if video == None else video # what if no video for any record?
-
+                    break
                 curr_score = score
 
                 players_string = ", ".join(players)
