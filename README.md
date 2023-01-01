@@ -29,7 +29,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - [x] Enable history commands
 - [ ] Allow add command to check if run already exists
 - [ ] Create google form for ALL run submissions, crowdsource help to fill the database. Check your youtube playlists + other saved resources
-- [ ] Continue mm history work where you left off, should be easier to do from that point
+- [ ] Continue mm history work where you left off, should be easier to do from that point, and add to the database as you go along
 - [ ] Create file which imports CSV and adds the runs
 - [ ] Create website for people to filter runs to see all information
 - [ ] Allow people to verify runs (tags, version, etc.)
