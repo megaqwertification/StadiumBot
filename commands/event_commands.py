@@ -4,8 +4,8 @@ from db import connect
 from formulas import frames_to_time_string, time_to_frames
 import embeds
 
-def get_event_type(id: int) -> str:
-    if id in [11, 13, 19, 31, 32]:
+def get_event_type(id):
+    if int(id) in [11, 13, 19, 31, 32]:
         event_type = 'scored'
     else:
         event_type = 'timed'
@@ -76,7 +76,7 @@ def register_event_commands(bot: Client):
         players_string = ", ".join(players)
         event_name = EVENTS[int(event_id)-1]
 
-        wr_string = f'{"(TAS)" if is_TAS else ""} Event {event_id}: {event_name} - {score} {"KOs" if event_type == "scored" else ""}by {players_string} {f"at {video}" if video else ""}'
+        wr_string = f'{"(TAS)" if is_TAS else ""} Event {event_id}: {event_name} - {score} {"KOs " if event_type == "scored" else ""}by {players_string} {f"at {video}" if video else ""}'
         # TODO: add clause for "many" for events with many ties (10+)
         await ctx.send(wr_string)
 
