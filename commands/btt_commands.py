@@ -7,7 +7,7 @@ from interactions import CommandContext, Option, OptionType, Choice
 from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, BTT_CHARACTERS, HRC_CHARACTERS, GUILD_IDS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
-from helper_functions import filter_btt_tags
+from .helper_functions import filter_btt_tags
 
 from db import connect
 
