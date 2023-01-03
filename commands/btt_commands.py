@@ -7,6 +7,8 @@ from interactions import CommandContext, Option, OptionType, Choice
 from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, BTT_CHARACTERS, HRC_CHARACTERS, GUILD_IDS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
+from helper_functions import filter_btt_tags
+
 from db import connect
 
 def register_btt_commands(bot: Client):
@@ -142,22 +144,37 @@ def register_btt_commands(bot: Client):
         description='Display the list of current BtT WRs',
         scope=GUILD_IDS,
         options=[
-            # TODO: add parameters in case you want a char or stage total
+            # TODO: add parameters in case you want a stage total
             Option(
                 name='tas',
                 description='default: RTA',
                 type=OptionType.BOOLEAN,
                 required=False,
             ),
+            Option(
+                name='char',
+                description='For same char on all stages',
+                type=OptionType.STRING,
+                required=False
+            ),
         ]   
     )
 
     async def _btt_wr_list(ctx: CommandContext, **kwargs):
         is_TAS =  kwargs.get('tas', False)
-
+        char_input = kwargs.get('char', None)
+        if char_input != None:
+            char_name = get_char_name(char_input, ALIASES)
+            if char_name not in BTT_CHARACTERS:
+                description = f'Please select a valid character'
+                await ctx.send(description, ephemeral=True)
+                return None
+        
         description_lines = [
             f'Break the Targets {"TAS " if is_TAS else "RTA "}World Records\n'
         ]
+        if char_input != None:
+            description_lines.append(char_name + ' Mismatch\n')
         total_high_score_f = 0
         
         conn = connect()
@@ -165,23 +182,39 @@ def register_btt_commands(bot: Client):
         # TODO: add option for specific char or stage
         # should be doable and keep the code clean
 
-        for stage in BTT_STAGES[:-1]:
+        for stage in BTT_STAGES:
+            cur = conn.cursor()
             # query each stage's WR
             # TODO: how do i go through each stage char, parameter if individual stage or char is selected
-
-            sql_q = f'SELECT * FROM btt_table WHERE character=\'{stage}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+            #print(char_name)
+            if char_input != None:
+                # char_name was assigned
+                sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+            else:
+                sql_q = f'SELECT * FROM btt_table WHERE character=\'{stage}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
             # TODO: add clause to make sure sheik shows up on zelda
             # TODO: coloquially, ICs vanilla is referred to as Ice Climbers instead of Sopo for vanilla ...
             if stage == 'Ice Climbers':
                 # TEMP
                 char = 'Popo'
+                if char_input != None:
+                    char = char_name
                 sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
             elif stage == 'Zelda':
                 # TEMP: only for vanilla query
                 char = 'Sheik'
+                if char_input != None:
+                    char = char_name
                 sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+            
+                
+            if stage == 'Seak' and char_input == None:
+                continue
             cur.execute(sql_q)
             
+            cur = filter_btt_tags([], cur)
+
+
             # process info
             players = []
             curr_score = 999
@@ -198,7 +231,9 @@ def register_btt_commands(bot: Client):
                 stage = record[1]
                 players.append(record[2])
                 score_time = record[3]
-                video = record[4][0] if video == None else video # what if no video for any record?
+                #print(stage)
+                if len(record[4]) != 0:
+                    video = record[4][0] if video == None else video # what if no video for any record?
 
                 curr_score = score_time
                 # TEMP, should only access under vanilla query
@@ -209,12 +244,34 @@ def register_btt_commands(bot: Client):
                 f"{char.strip()} - [{score_time}]({video}) - {', '.join(players)}"
             )
 
-            total_high_score_f += int(time_to_frames(score_time))
+            # TEMP AGAIN JUST TO TEST CHAR QUERY
+            if char_input != None:
+                description_lines.pop()
+                description_lines.append(
+                    f"{stage.strip()} - [{score_time}]({video}) - {', '.join(players)}"
+                )
+            if stage.strip() != 'Seak': # have to strip bcs we're getting from the database instead of the list .... bad design idiot rename ur vars rofl
+                total_high_score_f += int(time_to_frames(score_time))
             curr_score = 999
 
 
         total_high_score = frames_to_time_string(total_high_score_f)
-        total_high_score_desc = f'\nTotal High Score: [{total_high_score}]({"https://www.youtube.com/playlist?list=PLP-fO_NfCBaqcicPbCvGQOCIN1pL9hZyA" if is_TAS else "https://www.youtube.com/playlist?list=PLZmpvgqEAI7DioaEmIJG832_XKVpJHhy_"})'
+
+        vanilla_RTA_playlist = "https://www.youtube.com/playlist?list=PLZmpvgqEAI7DioaEmIJG832_XKVpJHhy_"
+        vanilla_TAS_playlist = "https://www.youtube.com/playlist?list=PLP-fO_NfCBaqcicPbCvGQOCIN1pL9hZyA"
+        mismatch_RTA_sheet = "https://docs.google.com/spreadsheets/d/1e8FNXsXG-y_ylUbWzA0S6ni1Yl4Sj73mINGneBSG164/edit#gid=0"
+        mismatch_TAS_sheet = "https://docs.google.com/spreadsheets/d/1BZEbvzlvWQSoUN1a_tcgxeBYmjLgla-m_5BZwinUUd0/edit#gid=335865100"
+        
+        if not is_TAS and char_input == None:
+            hyperlink = vanilla_RTA_playlist
+        elif not is_TAS and char_input != None:
+            hyperlink = mismatch_RTA_sheet
+        elif is_TAS and char_input == None:
+            hyperlink = vanilla_TAS_playlist
+        elif is_TAS and char_input != None:
+            hyperlink = mismatch_TAS_sheet
+
+        total_high_score_desc = f'\nTotal High Score: [{total_high_score}]({hyperlink})'
         description_lines.append(total_high_score_desc)
 
         await embeds.send_embeds(description_lines, ctx)
