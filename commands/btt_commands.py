@@ -321,10 +321,6 @@ def register_btt_commands(bot: Client):
 
         stage_input = kwargs.get('stage', char_name)
         stage_name = get_char_name(stage_input, ALIASES)
-        if stage_name not in BTT_STAGES:
-            description = f'Please select a valid stage'
-            await ctx.send(description, ephemeral=True)
-            return None
 
         # catch all if "ICs" is only inputted for vanilla
         if kwargs.get('stage') == None and char_name == 'Ice Climbers':
@@ -339,6 +335,11 @@ def register_btt_commands(bot: Client):
         # Catch all if "Sopo" is only inputted for vanilla
         if stage_name == 'Popo':
             stage_name = 'Ice Climbers'
+
+        if stage_name not in BTT_STAGES:
+            description = f'Please select a valid stage'
+            await ctx.send(description, ephemeral=True)
+            return None
 
         is_TAS = kwargs.get('tas', False)
 
