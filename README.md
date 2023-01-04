@@ -18,7 +18,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - sus/mismatch command verification
 - Add sus tags (and error-checking) for all mode WR list commands, all mode WR history commands, and individual WR query commands
 - top 10 leaderboard per char
-- BTT RTTF and EFB records
+- RTTF and EFB records, credits as well
 - NOT 2p-4p , I think that's better for a separate, larger database with its own functionality
 - Pipe dream: a website with more database functionality
 
