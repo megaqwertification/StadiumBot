@@ -6,6 +6,7 @@ from interactions import CommandContext, Option, OptionType, Choice
 
 from constants import ALIASES, BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS, HRC_CHARACTERS, GUILD_IDS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
+from .helper_functions import filter_btt_tags
 
 from db import connect
 import random
@@ -29,6 +30,12 @@ def register_general_commands(bot: Client):
                 required=True,
             ),
             Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            ),
+            Option(
                 name='sus',
                 description='Query a random SuS record',
                 type=OptionType.BOOLEAN,
@@ -47,7 +54,7 @@ def register_general_commands(bot: Client):
             if char_name == 'Zelda/Sheik':
                 char_name = random.choice(['Zelda', 'Sheik'])
             stage_name = random.choice(BTT_STAGES)
-            is_TAS = random.choice([True, False])
+            is_TAS = kwargs.get('tas', False)
             if is_SuS:
                 tags_list = [random.choice(list(BTT_SUS_TAGS.keys()) + [''])]
             else:
