@@ -259,7 +259,7 @@ def register_btt_commands(bot: Client):
 
         vanilla_RTA_playlist = "https://www.youtube.com/playlist?list=PLZmpvgqEAI7DioaEmIJG832_XKVpJHhy_"
         vanilla_TAS_playlist = "https://www.youtube.com/playlist?list=PLP-fO_NfCBaqcicPbCvGQOCIN1pL9hZyA"
-        mismatch_RTA_sheet = "https://docs.google.com/spreadsheets/d/1e8FNXsXG-y_ylUbWzA0S6ni1Yl4Sj73mINGneBSG164/edit#gid=0"
+        mismatch_RTA_sheet = "https://docs.google.com/spreadsheets/d/18NJ1IP7Z43l_FRe7sZnMQPte-sKn1Ddf82iiJODNo_s/edit#gid=0"
         mismatch_TAS_sheet = "https://docs.google.com/spreadsheets/d/1Nr1PDHO3UeH3oQSeEjeFNdEKrfEdsc9GxbsEWvEuFuo/edit#gid=1672544190"
         
         if not is_TAS and char_input == None:
