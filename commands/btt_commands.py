@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, BTT_CHARACTERS, HRC_CHARACTERS, GUILD_IDS
+from constants import ALIASES, BTT_SUS_TAGS, BTT_STAGES, BTT_CHARACTERS, HRC_CHARACTERS, GUILD_IDS, BTT_CHARS_STAGE_COMMAND
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from .helper_functions import filter_btt_tags
@@ -170,17 +170,112 @@ def register_btt_commands(bot: Client):
                 await ctx.send(description, ephemeral=True)
                 return None
         
+        stage_input = kwargs.get('stage', None)
+        if stage_input != None:
+            stage_name = get_char_name(stage_input, ALIASES)
+            if stage_name not in BTT_STAGES:
+                description = f'Please select a valid stage'
+                await ctx.send(description, ephemeral=True)
+                return None
+
+        if char_input and stage_input:
+            description = f'Please only select one of stage or char'
+            await ctx.send(description, ephemeral=True)
+            return None
+
         description_lines = [
             f'Break the Targets {"TAS " if is_TAS else "RTA "}World Records\n'
         ]
         if char_input != None:
             description_lines.append(char_name + ' Mismatch\n')
+        if stage_input != None:
+            description_lines.append(stage_name + ' Stage Mismatch\n')
+
         total_high_score_f = 0
         
         conn = connect()
         cur = conn.cursor()
         # TODO: add option for specific char or stage
         # should be doable and keep the code clean
+
+
+        # Stage command
+        if stage_input != None:
+            for character in BTT_CHARS_STAGE_COMMAND:
+                cur = conn.cursor()
+                sql_q = f'SELECT * FROM btt_table WHERE character=\'{character}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+                # if stage_name == 'Seak' and char_input == None:
+                #     continue
+                cur.execute(sql_q)
+                cur = filter_btt_tags([], cur)
+                #print(cur)
+                # process info
+                players = []
+                curr_score = 999
+                char = ''
+                video = None
+                score_time = 0
+                #print(cur)
+                for record in cur:
+                #     if record[1].strip() == 'Mario':
+                #         print(record)
+                    if record[3] > curr_score:
+                        break
+                    elif record[3] == curr_score:
+                        players.append(record[2])
+                        continue
+                    char = record[0]
+                    stage = record[1]
+                    players.append(record[2])
+                    score_time = record[3]
+                    #print(stage)
+                    if len(record[4]) != 0:
+                        video = record[4][0] if video == None else video # what if no video for any record?
+
+                    curr_score = score_time
+
+
+                description_lines.append(
+                    f"{character.strip()} - [{score_time}]({video}) - {', '.join(players)}"
+                )
+                
+                total_high_score_f += int(time_to_frames(score_time))   
+                curr_score = 999
+
+
+
+
+
+
+            total_high_score = frames_to_time_string(total_high_score_f)
+            vanilla_RTA_playlist = "https://www.youtube.com/playlist?list=PLZmpvgqEAI7DioaEmIJG832_XKVpJHhy_"
+            vanilla_TAS_playlist = "https://www.youtube.com/playlist?list=PLP-fO_NfCBaqcicPbCvGQOCIN1pL9hZyA"
+            mismatch_RTA_sheet = "https://docs.google.com/spreadsheets/d/1e8FNXsXG-y_ylUbWzA0S6ni1Yl4Sj73mINGneBSG164/edit#gid=0"
+            mismatch_TAS_sheet = "https://docs.google.com/spreadsheets/d/1Nr1PDHO3UeH3oQSeEjeFNdEKrfEdsc9GxbsEWvEuFuo/edit#gid=1672544190"
+            
+            if not is_TAS and stage_input == None:
+                hyperlink = vanilla_RTA_playlist
+            elif not is_TAS and stage_input != None:
+                hyperlink = mismatch_RTA_sheet
+            elif is_TAS and stage_input == None:
+                hyperlink = vanilla_TAS_playlist
+            elif is_TAS and stage_input != None:
+                hyperlink = mismatch_TAS_sheet
+
+
+            #total_distance = f'\nTotal High Score: [{total_high_score}]({"https://www.youtube.com/playlist?list=PLP-fO_NfCBaqcicPbCvGQOCIN1pL9hZyA" if is_TAS and char_input == None else "https://www.youtube.com/playlist?list=PLZmpvgqEAI7DioaEmIJG832_XKVpJHhy_"})'
+            total_high_score_desc = f'\nTotal High Score: [{total_high_score}]({hyperlink})'
+            description_lines.append(total_high_score_desc)
+
+            await embeds.send_embeds(description_lines, ctx)
+
+
+            return
+
+
+
+
+
 
         for stage in BTT_STAGES:
             cur = conn.cursor()
