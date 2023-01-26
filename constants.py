@@ -40,6 +40,34 @@ BTT_CHARACTERS = [
     "Crazy Hand"
 ]
 
+BTT_CHARS_STAGE_COMMAND = [
+    "Dr. Mario",
+    "Mario",
+    "Luigi",
+    "Bowser",
+    "Peach",
+    "Yoshi",
+    "Donkey Kong",
+    "Captain Falcon",
+    "Ganondorf",
+    "Falco",
+    "Fox",
+    "Ness",
+    "Popo",
+    "Kirby",
+    "Samus",
+    "Sheik",
+    "Link",
+    "Young Link",
+    "Pichu",
+    "Pikachu",
+    "Jigglypuff",
+    "Mewtwo",
+    "Mr. Game & Watch",
+    "Marth",
+    "Roy",
+]
+
 HRC_CHARACTERS = [
     "Dr. Mario",
     "Mario",
