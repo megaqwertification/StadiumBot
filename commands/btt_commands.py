@@ -157,6 +157,12 @@ def register_btt_commands(bot: Client):
                 type=OptionType.STRING,
                 required=False
             ),
+            Option(
+                name='stage',
+                description='For same stage with all chars',
+                type=OptionType.STRING,
+                required=False
+            ),
         ]   
     )
 
@@ -238,7 +244,7 @@ def register_btt_commands(bot: Client):
                 description_lines.append(
                     f"{character.strip()} - [{score_time}]({video}) - {', '.join(players)}"
                 )
-                
+
                 total_high_score_f += int(time_to_frames(score_time))   
                 curr_score = 999
 
