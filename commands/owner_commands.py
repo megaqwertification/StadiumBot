@@ -171,6 +171,7 @@ def register_owner_commands(bot: Client):
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
 
+        video = sources.split(',')[0]
         description_lines = []
 
 
@@ -201,7 +202,7 @@ def register_owner_commands(bot: Client):
         # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
         # TODO: test datetime values
 
-        video = sources.split(',')[0]
+        
         conn.commit()
         # TODO: update desc if it needs tags or something
         #description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'

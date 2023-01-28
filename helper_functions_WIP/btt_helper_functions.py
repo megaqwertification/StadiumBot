@@ -72,8 +72,8 @@ def get_current_btt_wr(character, stage, is_TAS, tags_list):
         
     players_string = ", ".join(players)
 
-    wr_string = f'{"(TAS)" if is_TAS else ""} {character}/{stage} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
-    CommandContext.send(wr_string)
+    # wr_string = f'{"(TAS)" if is_TAS else ""} {character}/{stage} {"(" + ",".join(tags_list) + ") " if tags_list else ""}- {score} by {players_string} at {video}'
+    # CommandContext.send(wr_string)
 
 
 
