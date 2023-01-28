@@ -3,6 +3,9 @@ from formulas import get_char_name
 
 from db import connect
 
+from helper_functions_WIP.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
+import embeds
+
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
 
 # TODO: verify insertions are valid. eg. make sure it's ntsc1.02 and not ntsc 1.02
@@ -119,6 +122,8 @@ def register_owner_commands(bot: Client):
             description = f'Unauthorized use of command, only the bot owner can add records'
             await ctx.send(description, ephemeral=True)
             return None
+        await ctx.defer()
+
         char_input = kwargs.get("character")
         char = get_char_name(char_input, ALIASES)
         # TODO: raise error if character isn't in database
@@ -166,10 +171,32 @@ def register_owner_commands(bot: Client):
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
 
+        description_lines = []
+
+
+        # Obtain Previous WR details
+        prev_wr = get_current_btt_wr(char, stage, is_tas)
+        old_stage_total = get_stage_total(stage, is_tas)
+        old_char_total = get_char_total(char, is_tas)
+
+
         conn = connect()
         sql_q = f"INSERT INTO btt_table VALUES('{char}', '{stage}', '{player}', {score_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, {is_debug}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
+
+        improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[3]} by {prev_wr[2]}]({prev_wr[4].pop()}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
+        description_lines.append(improved_str)
+
+
+        # Obtain new WR details
+        new_char_total = get_char_total(char, is_tas)
+        new_stage_total = get_stage_total(stage, is_tas)
+
+        char_total_str = f'{char} character{" TAS" if is_tas else ""} total improved from {old_char_total[1]} to {new_char_total[1]}'
+        description_lines.append(char_total_str)
+        stage_total_str = f'{stage} stage{" TAS" if is_tas else ""} total improved from {old_stage_total[1]} to {new_stage_total[1]}'
+        description_lines.append(stage_total_str)
 
         # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
         # TODO: test datetime values
@@ -177,9 +204,8 @@ def register_owner_commands(bot: Client):
         video = sources.split(',')[0]
         conn.commit()
         # TODO: update desc if it needs tags or something
-        description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
-        await ctx.send(description)
-
+        #description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
+        await embeds.send_embeds(description_lines, ctx)
 
 
     @bot.command(
