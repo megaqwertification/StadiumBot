@@ -185,6 +185,7 @@ def register_owner_commands(bot: Client):
         sql_q = f"INSERT INTO btt_table VALUES('{char}', '{stage}', '{player}', {score_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, {is_debug}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
+        conn.commit()
 
         improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[3]} by {prev_wr[2]}]({prev_wr[4].pop()}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
         description_lines.append(improved_str)
