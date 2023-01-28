@@ -22,7 +22,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - NOT 2p-4p , I think that's better for a separate, larger database with its own functionality
 - Pipe dream: a website with more database functionality
 
-*idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands. Please make a feature request under github issues for an rquest
+*idea being here does not mean I'll implement it. I do not want to oversaturate the bot with commands. Please make a feature request under github issues for a request
 
 # Current checklist
 - [x] Populate Vanilla RTA & TAS runs
