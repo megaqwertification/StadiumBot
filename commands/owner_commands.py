@@ -187,6 +187,12 @@ def register_owner_commands(bot: Client):
         cur.execute(sql_q)
         conn.commit()
 
+        if prev_wr == None:
+            # TODO: update desc if it needs tags or something
+            description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
+            await ctx.send(description)
+            return
+
         improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[3]} by {prev_wr[2]}]({prev_wr[4].pop()}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
         description_lines.append(improved_str)
 
@@ -205,8 +211,7 @@ def register_owner_commands(bot: Client):
 
         
         conn.commit()
-        # TODO: update desc if it needs tags or something
-        #description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
+        
         await embeds.send_embeds(description_lines, ctx)
 
 
