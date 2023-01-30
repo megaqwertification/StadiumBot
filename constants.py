@@ -2,43 +2,6 @@ PERSONAL_GUILD_ID = 977851191088267274
 STADIUM_GUILD_ID = 132025591770644480
 GUILD_IDS = [PERSONAL_GUILD_ID, STADIUM_GUILD_ID]
 
-TENMM_CHARACTERS = [
-    "Dr. Mario",
-    "Mario",
-    "Luigi",
-    "Bowser",
-    "Peach",
-    "Yoshi",
-    "Donkey Kong",
-    "Captain Falcon",
-    "Ganondorf",
-    "Falco",
-    "Fox",
-    "Ness",
-    "Ice Climbers",
-    "Kirby",
-    "Samus",
-    "Zelda",
-    "Link",
-    "Young Link",
-    "Pichu",
-    "Pikachu",
-    "Jigglypuff",
-    "Mewtwo",
-    "Mr. Game & Watch",
-    "Marth",
-    "Roy",
-    "Sheik",
-    "Zelda/Sheik"
-    "Popo",
-    "M. Wireframe",
-    "F. Wireframe",
-    "Giga Bowser",
-    "Master Hand",
-    "Crazy Hand",
-    "Sandbag",
-]
-
 VERSIONS = [
     "NTSC1.00",
     "NTSC1.01",
@@ -117,9 +80,4 @@ ALIASES = {
     'ch' : 'Crazy Hand',
     'Seak' : 'Seak',
     'seak' : 'Seak',
-}
-
-TENMM_SUS_TAGS = {
-    'OHKO' : 'One-Hit KO (modified moves)',
-    'Throw' : 'Throw Only',
 }

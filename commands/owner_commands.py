@@ -1,6 +1,7 @@
-from constants import TENMM_CHARACTERS, GUILD_IDS, VERSIONS, ALIASES
+from constants import GUILD_IDS, VERSIONS, ALIASES
 from constants_WIP.btt_constants import BTT_CHARACTERS, BTT_STAGES
 from constants_WIP.hrc_constants import HRC_CHARACTERS
+from constants_WIP.ten_mm_constants import TENMM_CHARACTERS
 from formulas import get_char_name
 
 from db import connect
