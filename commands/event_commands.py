@@ -1,5 +1,6 @@
 from interactions import Client, CommandContext, Embed, Option, OptionType
-from constants import EVENTS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants_WIP.event_constants import EVENTS
 from db import connect
 from formulas import frames_to_time_string, time_to_frames
 import embeds
