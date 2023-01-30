@@ -1,4 +1,5 @@
-from constants import BTT_CHARACTERS, HRC_CHARACTERS, TENMM_CHARACTERS, GUILD_IDS, VERSIONS, ALIASES, BTT_STAGES
+from constants import HRC_CHARACTERS, TENMM_CHARACTERS, GUILD_IDS, VERSIONS, ALIASES
+from constants_WIP.btt_constants import BTT_CHARACTERS, BTT_STAGES
 from formulas import get_char_name
 
 from db import connect
