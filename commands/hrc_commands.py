@@ -5,7 +5,8 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, HRC_SUS_TAGS, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants_WIP.hrc_constants import HRC_CHARACTERS, HRC_SUS_TAGS
 from formulas import m_to_ft, get_char_name
 
 from db import connect
