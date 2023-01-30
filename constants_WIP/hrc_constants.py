@@ -1,3 +1,33 @@
+HRC_CHARACTERS = [
+    "Dr. Mario",
+    "Mario",
+    "Luigi",
+    "Bowser",
+    "Peach",
+    "Yoshi",
+    "Donkey Kong",
+    "Captain Falcon",
+    "Ganondorf",
+    "Falco",
+    "Fox",
+    "Ness",
+    "Ice Climbers",
+    "Kirby",
+    "Samus",
+    "Zelda/Sheik",
+    "Link",
+    "Young Link",
+    "Pichu",
+    "Pikachu",
+    "Jigglypuff",
+    "Mewtwo",
+    "Mr. Game & Watch",
+    "Marth",
+    "Roy",
+    "Zelda",
+    "Sheik"
+]
+
 HRC_SUS_TAGS = {
     'NBA' : 'No Bat Allowed',
     'NBD' : 'No Bat Drops',

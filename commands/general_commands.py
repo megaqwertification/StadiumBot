@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, HRC_CHARACTERS, GUILD_IDS
+from constants import ALIASES, GUILD_IDS
 from constants_WIP.btt_constants import BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 from .helper_functions import filter_btt_tags

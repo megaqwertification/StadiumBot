@@ -2,36 +2,6 @@ PERSONAL_GUILD_ID = 977851191088267274
 STADIUM_GUILD_ID = 132025591770644480
 GUILD_IDS = [PERSONAL_GUILD_ID, STADIUM_GUILD_ID]
 
-HRC_CHARACTERS = [
-    "Dr. Mario",
-    "Mario",
-    "Luigi",
-    "Bowser",
-    "Peach",
-    "Yoshi",
-    "Donkey Kong",
-    "Captain Falcon",
-    "Ganondorf",
-    "Falco",
-    "Fox",
-    "Ness",
-    "Ice Climbers",
-    "Kirby",
-    "Samus",
-    "Zelda/Sheik",
-    "Link",
-    "Young Link",
-    "Pichu",
-    "Pikachu",
-    "Jigglypuff",
-    "Mewtwo",
-    "Mr. Game & Watch",
-    "Marth",
-    "Roy",
-    "Zelda",
-    "Sheik"
-]
-
 TENMM_CHARACTERS = [
     "Dr. Mario",
     "Mario",
@@ -201,16 +171,6 @@ ALIASES = {
     'ch' : 'Crazy Hand',
     'Seak' : 'Seak',
     'seak' : 'Seak',
-}
-
-HRC_SUS_TAGS = {
-    'NBA' : 'No Bat Allowed',
-    'NBD' : 'No Bat Drops',
-    'BMO' : 'B Moves Only',
-    'NJA' : 'No Jump Allowed',
-    'LTA' : 'Limited Time Attack',
-    'Falcon Bat Swing' : 'Use Falcon Bat Swing to hit Sandbag at end',
-    'AAA' : 'All Aerial Attacks',
 }
 
 TENMM_SUS_TAGS = {
