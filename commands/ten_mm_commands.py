@@ -3,7 +3,7 @@ import embeds
 
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
-from constants import ALIASES, HRC_CHARACTERS, PERSONAL_GUILD_ID, STADIUM_GUILD_ID, TENMM_CHARACTERS
+from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID, TENMM_CHARACTERS
 
 from formulas import get_char_name, frames_to_time_string, time_to_frames
 from db import connect
