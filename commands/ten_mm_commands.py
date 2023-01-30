@@ -3,8 +3,8 @@ import embeds
 
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
-from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
-from constants_WIP.ten_mm_constants import TENMM_CHARACTERS
+from constants.general_constants import ALIASES, GUILD_IDS
+from constants.ten_mm_constants import TENMM_CHARACTERS
 
 from formulas import get_char_name, frames_to_time_string, time_to_frames
 from db import connect
@@ -13,7 +13,7 @@ def register_10mm_commands(bot: Client):
     @bot.command(
         name='10mm-wr',
         description='Query a 10mm current WR',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='character',
@@ -62,7 +62,7 @@ def register_10mm_commands(bot: Client):
     @bot.command(
         name='10mm-wr-list',
         description='Query for 10mm WR list',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='tas',

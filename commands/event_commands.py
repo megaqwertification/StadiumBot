@@ -1,6 +1,6 @@
 from interactions import Client, CommandContext, Embed, Option, OptionType
-from constants import PERSONAL_GUILD_ID, STADIUM_GUILD_ID
-from constants_WIP.event_constants import EVENTS
+from constants.general_constants import GUILD_IDS
+from constants.event_constants import EVENTS
 from db import connect
 from formulas import frames_to_time_string, time_to_frames
 import embeds
@@ -16,7 +16,7 @@ def register_event_commands(bot: Client):
     @bot.command(
         name='event-wr',
         description='Query an event\'s current WR',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='event_id',
@@ -85,7 +85,7 @@ def register_event_commands(bot: Client):
     @bot.command(
         name='event-wr-list',
         description='Query for event WR list',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='tas',

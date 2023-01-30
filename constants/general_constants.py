@@ -9,14 +9,6 @@ VERSIONS = [
     "PAL"
 ]
 
-# AKANEIA_CHARACTERS_STAGES = [
-#     "Wolf",
-#     "Diddy Kong",
-#     "Charizard"
-# ]
-# TODO: add akaneia versions
-# AKANEIA_VERSIONS = [ see akaneia github ]
-
 ALIASES = {
     # alias : char_name
     'Dr. Mario' : 'Dr. Mario',

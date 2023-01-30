@@ -1,5 +1,5 @@
 from db import connect
-from constants_WIP.btt_constants import BTT_CHARS_STAGE_COMMAND, BTT_STAGES
+from constants.btt_constants import BTT_CHARS_STAGE_COMMAND, BTT_STAGES
 from formulas import time_to_frames, frames_to_time_string
 from interactions import CommandContext
 

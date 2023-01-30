@@ -5,8 +5,8 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
-from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
-from constants_WIP.hrc_constants import HRC_CHARACTERS, HRC_SUS_TAGS
+from constants.general_constants import ALIASES, GUILD_IDS
+from constants.hrc_constants import HRC_CHARACTERS, HRC_SUS_TAGS
 from formulas import m_to_ft, get_char_name
 
 from db import connect
@@ -15,7 +15,7 @@ def register_hrc_commands(bot: Client):
     @bot.command(
         name='hrc-wr',
         description='Query a character\'s current WR',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='character',
@@ -81,7 +81,7 @@ def register_hrc_commands(bot: Client):
     @bot.command(
         name='hrc-wr-list',
         description='Display the list of current WRs',
-        scope=[PERSONAL_GUILD_ID, STADIUM_GUILD_ID],
+        scope=GUILD_IDS,
         options=[
             Option(
                 name='tas',
