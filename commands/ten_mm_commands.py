@@ -3,7 +3,8 @@ import embeds
 
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
-from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID, TENMM_CHARACTERS
+from constants import ALIASES, PERSONAL_GUILD_ID, STADIUM_GUILD_ID
+from constants_WIP.ten_mm_constants import TENMM_CHARACTERS
 
 from formulas import get_char_name, frames_to_time_string, time_to_frames
 from db import connect
@@ -33,7 +34,7 @@ def register_10mm_commands(bot: Client):
     async def _10mm_wr(ctx: CommandContext, **kwargs):
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
-        if char_name not in HRC_CHARACTERS:
+        if char_name not in TENMM_CHARACTERS:
             raise ValueError(f'Please select a valid character')
         is_TAS = kwargs.get('tas', False)
 
