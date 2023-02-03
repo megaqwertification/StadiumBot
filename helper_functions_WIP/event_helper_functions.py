@@ -108,6 +108,7 @@ def get_event_total(event_type, is_TAS):
 
             players_string = ", ".join(players)
             is_TAS = original_is_TAS
+        return frames_to_time_string(curr_total)
         
 
     else:
@@ -144,4 +145,4 @@ def get_event_total(event_type, is_TAS):
             players_string = ", ".join(players)
             is_TAS = original_is_TAS
 
-    return curr_total
+        return curr_total
