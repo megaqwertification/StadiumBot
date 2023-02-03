@@ -56,3 +56,7 @@ EVENTS = [
 EVENT_SUS_TAGS = {
     'OHO' : 'One Hand Only',
 }
+
+SCORED_EVENTS = [11, 13, 19, 31, 32]
+
+NO_TAS_EVENT_WRS = [4,11,14,17,25,27,35,38,43,46,47]
