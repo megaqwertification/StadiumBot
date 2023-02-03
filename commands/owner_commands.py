@@ -6,8 +6,8 @@ from formulas import get_char_name
 
 from db import connect
 
-from helper_functions_WIP.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
-from helper_functions_WIP.event_helper_functions import get_current_event_wr, get_event_total
+from helper_functions.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
+from helper_functions.event_helper_functions import get_current_event_wr, get_event_total
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
