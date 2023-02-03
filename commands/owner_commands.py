@@ -7,6 +7,7 @@ from formulas import get_char_name
 from db import connect
 
 from helper_functions_WIP.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
+from helper_functions_WIP.event_helper_functions import get_current_event_wr, get_event_total
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
@@ -618,6 +619,7 @@ def register_owner_commands(bot: Client):
             description = f'Unauthorized use of command, only the bot owner can add records'
             await ctx.send(description, ephemeral=True)
             return None
+        await ctx.defer()
 
         event_id = int(kwargs.get('event-id'))
         if event_id not in range(1,52):
@@ -661,6 +663,15 @@ def register_owner_commands(bot: Client):
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
 
+
+        prev_wr = get_current_event_wr(event_id,is_tas)
+        #temp
+        prev_wr_details = prev_wr[0]
+        prev_wr_players = ", ".join(prev_wr[1])
+        old_event_total = get_event_total(event_type, is_tas)
+
+        description_lines = []
+
         conn = connect()
         sql_q = f"INSERT INTO event_table VALUES({event_id}, '{player}', '{event_type}', {score}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
@@ -672,5 +683,23 @@ def register_owner_commands(bot: Client):
         video = sources.split(',')[0]
         conn.commit()
         # TODO: update desc if it needs tags or something
-        description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""}by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
-        await ctx.send(description)
+
+
+        
+
+        if prev_wr == None:
+            description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""}by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
+            await ctx.send(description)
+            return
+
+        improved_str = f'Improved Event {event_id}{" TAS" if is_tas else ""} record from [{prev_wr_details[3]} by {prev_wr_players}]({prev_wr_details[4].pop()}) to [{score} by {player}]({video}) {tags if tags != "" else ""}'
+        description_lines.append(improved_str)
+
+
+        # Obtain new WR details
+        new_event_total = get_event_total(event_type, is_tas)
+
+        event_total_str = f'Event{" TAS" if is_tas else ""} total improved from {old_event_total} to {new_event_total}'
+        description_lines.append(event_total_str)
+
+        await embeds.send_embeds(description_lines, ctx)
