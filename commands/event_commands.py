@@ -1,6 +1,6 @@
 from interactions import Client, CommandContext, Embed, Option, OptionType
 from constants.general_constants import GUILD_IDS
-from constants.event_constants import EVENTS
+from constants.event_constants import EVENTS, NO_TAS_EVENT_WRS, RTA_BEATS_TAS_EVENTS
 from db import connect
 from formulas import frames_to_time_string, time_to_frames
 import embeds
@@ -107,7 +107,6 @@ def register_event_commands(bot: Client):
         ]
         event_time_sum_f = 0
         event_KO_sum = 0
-        no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
         # TODO: would be better if this directly compared with the RTA score
 
         for event_id in range(1,len(EVENTS)+1):
@@ -115,7 +114,7 @@ def register_event_commands(bot: Client):
             
             if original_is_TAS is True:
                 # account for TAS wrs that were beaten by RTA
-                if event_id in no_tas_event_wr:
+                if event_id in NO_TAS_EVENT_WRS + RTA_BEATS_TAS_EVENTS:
                     is_TAS = False
                 else:
                     is_TAS = True
