@@ -359,17 +359,10 @@ def register_owner_commands(bot: Client):
         tags_str = "{" + tags + "}"
 
 
-
-
-
-
         # Obtain Previous WR details
         description_lines = []
         prev_wr = get_current_hrc_wr(char, is_tas)
         old_hrc_total = get_hrc_total(is_tas)
-
-
-
 
 
         conn = connect()
@@ -392,16 +385,14 @@ def register_owner_commands(bot: Client):
         # TODO: test datetime values
 
         # Obtain new WR details
+        conn.commit()
         new_hrc_total = get_hrc_total(is_tas)
 
         hrc_total_str = f'HRC {" TAS" if is_tas else ""} total improved from {old_hrc_total[0]}ft/{old_hrc_total[1]}m to {new_hrc_total[0]}ft/{new_hrc_total[1]}m'
         description_lines.append(hrc_total_str)
 
-        print(description_lines)
-
-
         
-        conn.commit()
+        
         # TODO: update desc if it needs tags or something
         #description = f'Added HRC{" TAS" if is_tas else ""} record: {char} - {score_ft_str}ft/{score_m_str}m by {player} at <{video}> ({tags})'
         await embeds.send_embeds(description_lines, ctx)
