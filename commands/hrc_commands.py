@@ -1,4 +1,3 @@
-
 from interactions import Client, CommandContext
 import embeds
 
@@ -6,7 +5,7 @@ from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 
 from constants.general_constants import ALIASES, GUILD_IDS
-from constants.hrc_constants import HRC_CHARACTERS, HRC_SUS_TAGS
+from constants.hrc_constants import HRC_CHARACTERS, HRC_BONUS_CHARACTERS, HRC_SUS_TAGS
 from formulas import m_to_ft, get_char_name
 
 from db import connect
@@ -41,7 +40,7 @@ def register_hrc_commands(bot: Client):
     async def _hrc_wr(ctx: CommandContext, **kwargs):
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
-        if char_name not in HRC_CHARACTERS:
+        if char_name not in HRC_CHARACTERS + HRC_BONUS_CHARACTERS:
             raise ValueError(f'Please select a valid character')
         is_TAS = kwargs.get('tas', False)
 
@@ -102,7 +101,7 @@ def register_hrc_commands(bot: Client):
         metre_sum = 0
         cur = conn.cursor()
 
-        for item in HRC_CHARACTERS[:-2]:
+        for item in HRC_CHARACTERS:
             query = f'SELECT * FROM hrc_table WHERE score_ft = (SELECT MAX(score_ft) FROM hrc_table WHERE character=\'{item}\' AND tas={is_TAS}) AND character=\'{item}\' AND tas={is_TAS};'
             cur.execute(query)
             
