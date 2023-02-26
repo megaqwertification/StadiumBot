@@ -23,7 +23,10 @@ HRC_CHARACTERS = [
     "Mewtwo",
     "Mr. Game & Watch",
     "Marth",
-    "Roy",
+    "Roy"
+]
+
+HRC_BONUS_CHARACTERS = [
     "Zelda",
     "Sheik"
 ]

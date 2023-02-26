@@ -8,6 +8,7 @@ from db import connect
 
 from helper_functions.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
 from helper_functions.event_helper_functions import get_current_event_wr, get_event_total
+from helper_functions.hrc_helper_functions import get_current_hrc_wr, get_hrc_total
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
@@ -313,6 +314,8 @@ def register_owner_commands(bot: Client):
             description = f'Unauthorized use of command, only the bot owner can add records'
             await ctx.send(description, ephemeral=True)
             return None
+        await ctx.defer()
+        
         char_input = kwargs.get("character")
         char = get_char_name(char_input, ALIASES)
         # TODO: raise error if character isn't in database
@@ -355,19 +358,53 @@ def register_owner_commands(bot: Client):
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
 
+
+
+
+
+
+        # Obtain Previous WR details
+        description_lines = []
+        prev_wr = get_current_hrc_wr(char, is_tas)
+        old_hrc_total = get_hrc_total(is_tas)
+
+
+
+
+
         conn = connect()
         sql_q = f"INSERT INTO hrc_table VALUES('{char}', '{player}', {score_ft_str}, {score_m_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
 
+
+        video = sources.split(',')[0]
+        if prev_wr == None:
+            # TODO: update desc if it needs tags or something
+            description = f'Added HRC{" TAS" if is_tas else ""} record: {char} - {score_ft_str}ft/{score_m_str}m by {player} at <{video}> ({tags})'
+            await ctx.send(description)
+            return
+
+        improved_str = f'Improved HRC{" TAS" if is_tas else ""} record: {char} from [{prev_wr[1]}ft/{prev_wr[2]}m by {prev_wr[3]}]({prev_wr[0][4].pop()}) to [{score_ft_str}ft/{score_m_str}m by {player}]({video}) {tags if tags != "" else ""}'
+        description_lines.append(improved_str)
+
         # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
         # TODO: test datetime values
 
-        video = sources.split(',')[0]
+        # Obtain new WR details
+        new_hrc_total = get_hrc_total(is_tas)
+
+        hrc_total_str = f'HRC {" TAS" if is_tas else ""} total improved from {old_hrc_total[0]}ft/{old_hrc_total[1]}m to {new_hrc_total[0]}ft/{new_hrc_total[1]}m'
+        description_lines.append(hrc_total_str)
+
+        print(description_lines)
+
+
+        
         conn.commit()
         # TODO: update desc if it needs tags or something
-        description = f'Added HRC{" TAS" if is_tas else ""} record: {char} - {score_ft_str}ft/{score_m_str}m by {player} at <{video}> ({tags})'
-        await ctx.send(description)
+        #description = f'Added HRC{" TAS" if is_tas else ""} record: {char} - {score_ft_str}ft/{score_m_str}m by {player} at <{video}> ({tags})'
+        await embeds.send_embeds(description_lines, ctx)
     
     
     # add 10mm record
