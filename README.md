@@ -27,6 +27,10 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 # Current checklist
 - [x] Populate Vanilla RTA & TAS runs
 - [x] Enable history commands
+- [ ] Populate current mismatch RTA history
+- [ ] Populate current mismatch TAS history
+- [ ] Crowdsource 10MM, HRC, and event match history into document
+- [ ] Create script for each mode to add to database
 - [ ] Allow add command to check if run already exists
 - [ ] Create google form for ALL run submissions, crowdsource help to fill the database. Check your youtube playlists + other saved resources
 - [ ] Continue mm history work where you left off, should be easier to do from that point, and add to the database as you go along
