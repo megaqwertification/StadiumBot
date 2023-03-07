@@ -38,7 +38,7 @@ def get_10mm_total(is_TAS):
     for char in TENMM_CHARACTERS:
         current_10mm_wr = get_current_10mm_wr(char, is_TAS)
         score = current_10mm_wr[0]
-        total_high_score_f += time_to_frames(float(score))
+        total_high_score_f += int(time_to_frames(float(score)))
 
     total_high_score_time = frames_to_time_string(total_high_score_f)
 
