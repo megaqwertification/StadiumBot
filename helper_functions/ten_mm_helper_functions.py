@@ -27,7 +27,7 @@ def get_current_10mm_wr(char, is_TAS):
     
 
 
-    return (cur_10mm_wr_score, players_string) # should return dict or something
+    return (cur_10mm_wr_score, players_string, video) # should return dict or something
 
 
 
