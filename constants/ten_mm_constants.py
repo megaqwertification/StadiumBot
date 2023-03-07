@@ -24,6 +24,9 @@ TENMM_CHARACTERS = [
     "Mr. Game & Watch",
     "Marth",
     "Roy",
+]
+
+TENMM_BONUS_CHARACTERS = [
     "Sheik",
     "Zelda/Sheik"
     "Popo",

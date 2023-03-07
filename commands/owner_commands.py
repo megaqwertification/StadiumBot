@@ -9,6 +9,7 @@ from db import connect
 from helper_functions.btt_helper_functions import get_stage_total, get_char_total, get_current_btt_wr
 from helper_functions.event_helper_functions import get_current_event_wr, get_event_total
 from helper_functions.hrc_helper_functions import get_current_hrc_wr, get_hrc_total
+from helper_functions.ten_mm_helper_functions import get_current_10mm_wr, get_10mm_total
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
@@ -487,6 +488,7 @@ def register_owner_commands(bot: Client):
             description = f'Unauthorized use of command, only the bot owner can add records'
             await ctx.send(description, ephemeral=True)
             return None
+        await ctx.defer()
 
         char_input = kwargs.get("character")
         char = get_char_name(char_input, ALIASES)
@@ -529,19 +531,39 @@ def register_owner_commands(bot: Client):
         sources_str = "{" + sources + "}"
         tags_str = "{" + tags + "}"
 
+        # Obtain previous WR details
+        description_lines = []
+        prev_wr = get_current_10mm_wr(char, is_tas)
+        old_10mm_total = get_10mm_total(is_tas)
+
+
         conn = connect()
         sql_q = f"INSERT INTO ten_mm_table VALUES('{char}', '{player}', {score_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
 
+        video = sources.split(',')[0]
+        if prev_wr == None:
+            # TODO: update desc if it needs tags or something
+            description = f'Added 10MM{" TAS" if is_tas else ""} record: {char} - {score_str} by {player} at <{video}> ({tags})'
+            await ctx.send(description)
+            return
+
+        improved_str = f'Improved 10MM{" TAS" if is_tas else ""} record: {char} from [{prev_wr[0]} by {prev_wr[1]}]({prev_wr[2]}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
+        description_lines.append(improved_str)
+
         # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
         # TODO: test datetime values
 
-        video = sources.split(',')[0]
+        # Obtain new WR details
         conn.commit()
+        new_10mm_total = get_10mm_total(is_tas)
+
+        ten_mm_total_str = f'10MM{" TAS" if is_tas else ""} total improved from {old_10mm_total} to {new_10mm_total}'
+        description_lines.append(ten_mm_total_str)
+
         # TODO: update desc if it needs tags or something
-        description = f'Added 10MM{" TAS" if is_tas else ""} record: {char} - {score_str} by {player} at <{video}> ({tags})'
-        await ctx.send(description)
+        await embeds.send_embeds(description_lines, ctx)
 
     @bot.command(
         name='add-event-record',
