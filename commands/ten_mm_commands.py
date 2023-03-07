@@ -4,7 +4,7 @@ import embeds
 from typing import List
 from interactions import CommandContext, Option, OptionType, Choice
 from constants.general_constants import ALIASES, GUILD_IDS
-from constants.ten_mm_constants import TENMM_CHARACTERS
+from constants.ten_mm_constants import TENMM_CHARACTERS, TENMM_BONUS_CHARACTERS
 
 from formulas import get_char_name, frames_to_time_string, time_to_frames
 from db import connect
@@ -34,7 +34,7 @@ def register_10mm_commands(bot: Client):
     async def _10mm_wr(ctx: CommandContext, **kwargs):
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
-        if char_name not in TENMM_CHARACTERS:
+        if char_name not in TENMM_CHARACTERS + TENMM_BONUS_CHARACTERS:
             raise ValueError(f'Please select a valid character')
         is_TAS = kwargs.get('tas', False)
 
@@ -83,7 +83,7 @@ def register_10mm_commands(bot: Client):
         ten_mm_time_sum_f = 0
         conn = connect()
 
-        for char_alias in TENMM_CHARACTERS[:-8]:
+        for char_alias in TENMM_CHARACTERS:
             char = get_char_name(char_alias, ALIASES)
             cur = conn.cursor()
             query = f'SELECT * FROM ten_mm_table WHERE score = (SELECT MIN(score) FROM ten_mm_table WHERE character=\'{char}\' AND tas={is_TAS}) AND character=\'{char}\' AND tas={is_TAS};'
