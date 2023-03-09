@@ -75,6 +75,8 @@ def register_event_commands(bot: Client):
             counter += 1 # probably a better way to do this with len or something...
 
         players_string = ", ".join(players)
+        if int(event_id) == 17 or int(event_id) == 32:
+                players_string = 'many'
         event_name = EVENTS[int(event_id)-1]
 
         wr_string = f'{"(TAS)" if is_TAS else ""} Event {event_id}: {event_name} - {score} {"KOs " if event_type == "scored" else ""}by {players_string} {f"at {video}" if video else ""}'
@@ -162,6 +164,8 @@ def register_event_commands(bot: Client):
                 counter += 1 # probably a better way to do this with len or something...
 
             players_string = ", ".join(players)
+            if int(event_id) == 17 or int(event_id) == 32:
+                players_string = 'many'
             KO_string = " KOs" if event_type == "scored" else ""
             description_lines.append( 
                 f'Event {event_id} - {f"[{str(score) + KO_string}]({video})" if video else f"{score}"}  - {players_string}'
