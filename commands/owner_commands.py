@@ -182,7 +182,7 @@ def register_owner_commands(bot: Client):
 
 
         # Obtain Previous WR details
-        prev_wr = get_current_btt_wr(char, stage, is_tas, tags)
+        prev_wr = get_current_btt_wr(char, stage, is_tas, [])
         old_stage_total = get_stage_total(stage, is_tas)
         old_char_total = get_char_total(char, is_tas)
 
@@ -199,7 +199,7 @@ def register_owner_commands(bot: Client):
             await ctx.send(description)
             return
 
-        improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[3]} by {prev_wr[2]}]({prev_wr[4].pop()}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
+        improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[3]} by {prev_wr[2]}]({prev_wr[4].pop()}) to [{score_str} by {player}]({video})' #{tags if tags != "" else ""}'
         description_lines.append(improved_str)
 
 
