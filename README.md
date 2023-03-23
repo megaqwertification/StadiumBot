@@ -29,13 +29,12 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - [x] Enable history commands
 - [ ] Populate current mismatch RTA history
 - [ ] Populate current mismatch TAS history
-- [ ] Crowdsource 10MM, HRC, and event match history into document
 - [ ] Create script for each mode to add to database
-- [ ] Allow add command to check if run already exists
+- [ ] Crowdsource 10MM, HRC, and event match history into document
+- [ ] Go through individual youtube channels (mimorox, LDA, etc.)
+- [ ] Allow add command to check if run already exists (i.e. a proper function)
 - [ ] Create google form for ALL run submissions, crowdsource help to fill the database. Check your youtube playlists + other saved resources
-- [ ] Continue mm history work where you left off, should be easier to do from that point, and add to the database as you go along
-- [ ] Create file which imports CSV and adds the runs
 - [ ] Create website for people to filter runs to see all information
 - [ ] Allow people to verify runs (tags, version, etc.)
-- [ ] overhaul database to something better, migrate if heroku cost is too much
+- [ ] overhaul database to something better, migrate bot if heroku cost is too much
 - [ ] Create a way for people to download runs as vids, be it a script or torrent file
