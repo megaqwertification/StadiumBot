@@ -27,7 +27,7 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 # Current checklist
 - [x] Populate Vanilla RTA & TAS runs
 - [x] Enable history commands
-- [ ] Populate current mismatch RTA history
+- [x] Populate current mismatch RTA history
 - [ ] Populate current mismatch TAS history
 - [ ] Create script for each mode to add to database
 - [ ] Crowdsource 10MM, HRC, and event match history into document
