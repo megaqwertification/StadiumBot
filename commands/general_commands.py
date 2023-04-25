@@ -71,6 +71,6 @@ def register_general_commands(bot: Client):
             else:
                 score = random_btt_wr[0][3]
                 players_string = random_btt_wr[1]
-                video = random_btt_wr[0][4].pop()
+                video = random_btt_wr[0][4].pop(0)
                 wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [] else ""}- {score} by {players_string} at {video}'
                 await ctx.send(wr_string)
