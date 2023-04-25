@@ -60,6 +60,8 @@ def get_current_btt_wr(character, stage, is_TAS, tags_list):
         if record[3] > curr_score:
             break
         players.append(record[2])
+        if record[3] == curr_score:
+            continue
         score = record[3]
         video = record[4] if video == None else video # what if no video for any record?
 
@@ -79,7 +81,7 @@ def get_current_btt_wr(character, stage, is_TAS, tags_list):
 
 
 
-    return current_btt_wr
+    return current_btt_wr, players_string
 
 def get_char_total(char_name, is_TAS):
     # if tags_list:
