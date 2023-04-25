@@ -7,7 +7,7 @@ from interactions import CommandContext, Option, OptionType, Choice
 from constants.general_constants import ALIASES, GUILD_IDS
 from constants.btt_constants import BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
-from helper_functions.btt_helper_functions import filter_btt_tags
+from helper_functions.btt_helper_functions import filter_btt_tags, get_current_btt_wr
 
 from db import connect
 import random
@@ -59,54 +59,18 @@ def register_general_commands(bot: Client):
             if is_SuS:
                 tags_list = [random.choice(list(BTT_SUS_TAGS.keys()) + [''])]
             else:
-                tags_list = ['']
+                tags_list = []
             # Need to get ANY random record with this tag in its tag list
 
+            random_btt_wr = get_current_btt_wr(char_name, stage_name, is_TAS, tags_list)
+
             # same logic from WR query, needs to be cleaned up
-            conn = connect()
-            sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_name}\' AND stage=\'{stage_name}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
-            cur = conn.cursor()
-            cur.execute(sql_q)
-
-            if is_SuS:
-                cur = [record for record in cur if set(tags_list).issubset(record[9])]
-            else:
-                # Temp if conditions, need to make it better or make a general helper function that includes riddle
-                if '1T' not in tags_list:
-                    cur = [record for record in cur if not set(['1T']).issubset(record[9])]
-                if 'misfire' not in tags_list and char_name == 'Luigi': # or 'misfire' not in tags_list or 'AR' not in tags_list:
-                    cur = [record for record in cur if not set(['misfire']).issubset(record[9])]
-                if 'AR' not in tags_list:
-                    cur = [record for record in cur if not set(['AR']).issubset(record[9])]
-                # more temporary filtering, probably a more efficient way to do things
-                if 'LSS' not in tags_list:
-                    cur = [record for record in cur if not set(['LSS']).issubset(record[9])]
-                if 'BSS' not in tags_list:
-                    cur = [record for record in cur if not set(['BSS']).issubset(record[9])]
-                if 'RSS' not in tags_list:
-                    cur = [record for record in cur if not set(['RSS']).issubset(record[9])]
-                if 'TSS' not in tags_list:
-                    cur = [record for record in cur if not set(['TSS']).issubset(record[9])]
-
-            # get the record, now pick a random one from this list....but it should pick out the record.....
-            # if there's no video (i.e. red square... what do?)
-            if len(cur) != 0:
-                players = []
-                curr_score = 999
-                video = None
-                for record in cur:
-                    if record[3] > curr_score:
-                        break
-                    players.append(record[2])
-                    score = record[3]
-                    video = record[4][0] if video == None else video # what if no video for any record?
-                    break
-                curr_score = score
-
-                players_string = ", ".join(players)
-
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [""] else ""}- {score} by {players_string} at {video}'
+            if random_btt_wr is None:
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [] else ""}'
                 await ctx.send(wr_string)
             else:
-                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [""] else ""}'
+                score = random_btt_wr[0][3]
+                players_string = random_btt_wr[1]
+                video = random_btt_wr[0][4].pop()
+                wr_string = f'{"(TAS)" if is_TAS else ""} {char_name} {"on " + stage_name} {"(" + ",".join(tags_list) + ") " if tags_list != [] else ""}- {score} by {players_string} at {video}'
                 await ctx.send(wr_string)
