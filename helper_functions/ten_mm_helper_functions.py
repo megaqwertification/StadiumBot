@@ -18,7 +18,10 @@ def get_current_10mm_wr(char, is_TAS):
             break
         players.append(record[1])
         score = record[2]
-        video = record[3][0] if video == None else video
+        if len(record[3]) != 0:
+            video = record[3][0]
+        else:
+            video = None
 
         cur_10mm_wr_score = score
         cur_10mm_wr = record
