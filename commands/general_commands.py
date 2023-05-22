@@ -47,6 +47,8 @@ def register_general_commands(bot: Client):
 
     async def _random(ctx: CommandContext, mode: str = 'btt', **kwargs):
         is_SuS = kwargs.get('sus', False)
+
+        await ctx.defer()
         
         if mode == 'btt':
             char_name = random.choice(BTT_CHARACTERS) 
