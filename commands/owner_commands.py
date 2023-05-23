@@ -198,6 +198,16 @@ def register_owner_commands(bot: Client):
             description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
             await ctx.send(description)
             return
+        
+        elif str(prev_wr[0][3]) == score_str:
+            # Tied wr
+            wr_tie_str = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - [{score_str} by {player}]({video})'
+            description_lines.append(wr_tie_str)
+            tied_with_str = f'Tied with [{prev_wr[1]}]({prev_wr[0][4].pop()})'
+            description_lines.append(tied_with_str)
+            conn.commit()
+            await embeds.send_embeds(description_lines, ctx)
+            return
 
         improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[0][3]} by {prev_wr[1]}]({prev_wr[0][4].pop()}) to [{score_str} by {player}]({video})'# {tags if tags != "" else ""}'
         description_lines.append(improved_str)
