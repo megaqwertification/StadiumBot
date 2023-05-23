@@ -35,6 +35,7 @@ def register_event_commands(bot: Client):
     )
     
     async def _event_wr(ctx: CommandContext, **kwargs):
+        await ctx.defer()
         event_id = kwargs.get("event_id")
         if int(event_id) not in range(1,52):
             description = f'Please select a valid Event Match ID'

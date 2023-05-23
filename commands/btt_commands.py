@@ -46,6 +46,7 @@ def register_btt_commands(bot: Client):
     )
 
     async def _btt_wr(ctx: CommandContext, **kwargs):
+        await ctx.defer()
         char_input = kwargs.get("character")
         char_name = get_char_name(char_input, ALIASES)
         if char_name not in BTT_CHARACTERS:
