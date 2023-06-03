@@ -54,8 +54,6 @@ def register_general_commands(bot: Client):
             char_name = random.choice(BTT_CHARACTERS) 
             #char_name = 'Zelda/Sheik'
             # temp lol unbelievably scuffed
-            if char_name == 'Zelda/Sheik':
-                char_name = random.choice(['Zelda', 'Sheik'])
             stage_name = random.choice(BTT_STAGES)
             is_TAS = kwargs.get('tas', False)
             if is_SuS:
