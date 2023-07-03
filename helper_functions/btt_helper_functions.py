@@ -107,10 +107,10 @@ def get_char_total(char_name, is_TAS):
         for record in cur:
         #     if record[1].strip() == 'Mario':
         #         print(record)
-            if record[3] > curr_score:
+            if record[1] > curr_score:
                 break
-            elif record[3] == curr_score:
-                players.append(record[2])
+            elif record[1] == curr_score:
+                players.append(record[0])
                 continue
             #char = record[0]
             #stage = record[1]
