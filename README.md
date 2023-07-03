@@ -28,12 +28,13 @@ Please open an issue on github or DM me on Discord megaqwertification#3976. You 
 - [x] Populate Vanilla RTA & TAS runs
 - [x] Enable history commands
 - [x] Populate current mismatch RTA history
-- [ ] Populate current mismatch TAS history
+- [x] Populate current mismatch TAS history
 - [ ] Create script for each mode to add to database
 - [ ] Crowdsource 10MM, HRC, and event match history into document
 - [ ] Go through individual youtube channels (mimorox, LDA, etc.)
 - [ ] Allow add command to check if run already exists (i.e. a proper function)
 - [ ] Create google form for ALL run submissions, crowdsource help to fill the database. Check your youtube playlists + other saved resources
+- [ ] Populate different modes' SuS categories
 - [ ] Create website for people to filter runs to see all information
 - [ ] Allow people to verify runs (tags, version, etc.)
 - [ ] overhaul database to something better, migrate bot if heroku cost is too much
