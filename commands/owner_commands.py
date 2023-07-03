@@ -209,7 +209,7 @@ def register_owner_commands(bot: Client):
             await embeds.send_embeds(description_lines, ctx)
             return
 
-        improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[0][1]} by {prev_wr[0]}]({prev_wr[0][2].pop()}) to [{score_str} by {player}]({video})'# {tags if tags != "" else ""}'
+        improved_str = f'Improved BTT{" TAS" if is_tas else ""} record: {char}/{stage} from [{prev_wr[0][1]} by {prev_wr[1]}]({prev_wr[0][2].pop()}) to [{score_str} by {player}]({video})'# {tags if tags != "" else ""}'
         description_lines.append(improved_str)
 
 
