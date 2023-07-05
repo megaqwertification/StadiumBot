@@ -1,2 +1,4 @@
 *.pyc
 *.csv
+venv
+helper_classes
