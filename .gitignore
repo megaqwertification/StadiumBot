@@ -1,3 +1,8 @@
 *.pyc
+<<<<<<< HEAD
 *.csv
 venv
+helper_classes
+=======
+*.csv
+>>>>>>> parent of 01a7b36 (Update gitignore)
