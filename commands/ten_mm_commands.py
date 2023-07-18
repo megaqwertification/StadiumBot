@@ -87,7 +87,7 @@ def register_10mm_commands(bot: Client):
         for char_alias in TENMM_CHARACTERS:
             char = get_char_name(char_alias, ALIASES)
             cur = conn.cursor()
-            query = f'SELECT * FROM ten_mm_table WHERE score = (SELECT MIN(score) FROM ten_mm_table WHERE character=\'{char}\' AND tas={is_TAS}) AND character=\'{char}\' AND tas={is_TAS};'
+            query = f'SELECT * FROM ten_mm_table WHERE score = (SELECT MIN(score) FROM ten_mm_table WHERE character=\'{char}\' AND tas={is_TAS}) AND character=\'{char}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
             cur.execute(query)
 
             counter = 0
