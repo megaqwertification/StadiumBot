@@ -106,7 +106,7 @@ def register_10mm_commands(bot: Client):
                 score = record[2]
                 video = record[3][0] if record[3] else None
 
-                ten_mm_time_sum_f += int(time_to_frames(float(score)))  #tabbed left once?
+            ten_mm_time_sum_f += int(time_to_frames(float(score)))
 
             players_string = ", ".join(players)
             description_lines.append(
