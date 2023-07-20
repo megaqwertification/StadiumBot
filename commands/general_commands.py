@@ -90,7 +90,7 @@ def register_general_commands(bot: Client):
         options=[
             Option(
                 name='mode',
-                description='Choose your mode (BTT, HRC, 10MM, Events)',
+                description='Choose your mode (BTT, HRC, Events, 10MM)',
                 type=OptionType.STRING,
                 choices=[
                     Choice(
