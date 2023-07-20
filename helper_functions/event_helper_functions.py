@@ -1,5 +1,5 @@
 from interactions import Client, CommandContext, Embed, Option, OptionType
-from constants.event_constants import EVENTS, SCORED_EVENTS, NO_TAS_EVENT_WRS
+from constants.event_constants import EVENTS, SCORED_EVENTS, NO_TAS_EVENT_WRS, RTA_BEATS_TAS_EVENTS
 from db import connect
 from formulas import frames_to_time_string, time_to_frames
 import embeds
@@ -24,6 +24,12 @@ def get_current_event_wr(event_id, is_TAS):
     # no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
     # if (event_id in no_tas_event_wr) and is_TAS:
     #     is_TAS=False
+    if is_TAS is True:
+        # account for TAS wrs that were beaten by RTA
+        if event_id in (NO_TAS_EVENT_WRS + RTA_BEATS_TAS_EVENTS):
+            is_TAS = False
+        else:
+            is_TAS = True
 
     conn = connect()
     if event_type == 'timed':
