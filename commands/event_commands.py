@@ -44,6 +44,13 @@ def register_event_commands(bot: Client):
 
         is_TAS = kwargs.get("tas", False)
         event_type = get_event_type(event_id)
+
+        if is_TAS is True:
+        # account for TAS wrs that were beaten by RTA
+            if int(event_id) in (NO_TAS_EVENT_WRS + RTA_BEATS_TAS_EVENTS):
+                is_TAS = False
+            else:
+                is_TAS = True # i know this is unnecessary but i'll deal w/ it when refactoring
         
         # no_tas_event_wr = [4,11,14,17,25,27,35,38,43,46,47]
         # if (event_id in no_tas_event_wr) and is_TAS:

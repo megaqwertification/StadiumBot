@@ -6,8 +6,16 @@ from interactions import CommandContext, Option, OptionType, Choice
 
 from constants.general_constants import ALIASES, GUILD_IDS
 from constants.btt_constants import BTT_STAGES, BTT_CHARACTERS, BTT_SUS_TAGS
+from constants.hrc_constants import HRC_CHARACTERS
+from constants.event_constants import EVENTS, SCORED_EVENTS, NO_TAS_EVENT_WRS
+from constants.ten_mm_constants import TENMM_CHARACTERS
+
 from formulas import get_char_name, time_to_frames, frames_to_time_string
+
 from helper_functions.btt_helper_functions import filter_btt_tags, get_current_btt_wr
+from helper_functions.hrc_helper_functions import get_current_hrc_wr
+from helper_functions.event_helper_functions import get_current_event_wr, get_event_type
+from helper_functions.ten_mm_helper_functions import get_current_10mm_wr
 
 from db import connect
 import random
@@ -88,7 +96,19 @@ def register_general_commands(bot: Client):
                     Choice(
                         name='BTT',
                         value='btt'
-                    )
+                    ),
+                    Choice(
+                        name='HRC',
+                        value='hrc'
+                    ),
+                    Choice(
+                        name='Events',
+                        value='events'
+                    ),
+                    Choice(
+                        name='10MM',
+                        value='10mm'
+                    ),
                 ],
                 required=True,
             ),
@@ -101,83 +121,225 @@ def register_general_commands(bot: Client):
         ] 
     )
 
-    async def _recordcount(ctx: CommandContext, mode: str = 'btt', **kwargs):
-        await ctx.defer()
+    async def _recordcount(ctx: CommandContext, mode: str, **kwargs):
+        if mode == 'btt':
+            await ctx.defer()
 
-        is_TAS =  kwargs.get('tas', False)
-        
-        description_lines = [
-            f'Break the Targets {"TAS " if is_TAS else "RTA "} World Record Count\n'
-        ]
-        
-        record_count_dict = {}
-        
-        conn = connect()
-        cur = conn.cursor()
-        
-
-        for stage in BTT_STAGES:
-            cur = conn.cursor()
-            sql_q = f'SELECT * FROM btt_table WHERE character=\'{stage}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
-
-            if stage == 'Ice Climbers':
-                # TEMP
-                char = 'Popo'
-                sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
-            elif stage == 'Zelda':
-                # TEMP: only for vanilla query
-                char = 'Sheik'
-                sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
-                         
-            if stage == 'Seak':
-                continue
-
-
-            cur.execute(sql_q)
+            is_TAS =  kwargs.get('tas', False)
             
-            cur = filter_btt_tags([], cur)
+            description_lines = [
+                f'Break the Targets {"TAS" if is_TAS else "RTA"} World Record Count\n'
+            ]
+            
+            record_count_dict = {}
+            
+            conn = connect()
+            cur = conn.cursor()
+            
 
+            for stage in BTT_STAGES:
+                cur = conn.cursor()
+                sql_q = f'SELECT * FROM btt_table WHERE character=\'{stage}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
 
-            # process info
-            players = []
-            curr_score = 999
-            char = ''
-            video = None
-            score_time = 0
-            for record in cur:
-                if record[3] > curr_score:
-                    break
-                elif record[3] == curr_score:
-                    players.append(record[2])
+                if stage == 'Ice Climbers':
+                    # TEMP
+                    char = 'Popo'
+                    sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+                elif stage == 'Zelda':
+                    # TEMP: only for vanilla query
+                    char = 'Sheik'
+                    sql_q = f'SELECT * FROM btt_table WHERE character=\'{char}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+                            
+                if stage == 'Seak':
                     continue
-                char = record[0]
-                stage = record[1]
-                players.append(record[2])
-                score_time = record[3]
-                #print(stage)
-                if len(record[4]) != 0:
-                    video = record[4][0] if video == None else video # what if no video for any record?
-
-                curr_score = score_time
-                # TEMP, should only access under vanilla query
-                if stage.strip() == 'Ice Climbers':
-                    char = 'Ice Climbers' 
-
-            for player in players:
-                if player not in record_count_dict:
-                    record_count_dict[player] = 1
-                else:
-                    record_count_dict[player] += 1
-
-        # Sort by value https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
-        result = dict(sorted(record_count_dict.items(), key=lambda item:item[1], reverse=True))
 
 
-        for player in result:
-            description_lines.append(
-                f"{player} - {result[player]}"
-            )
+                cur.execute(sql_q)
+                
+                cur = filter_btt_tags([], cur)
 
-        await embeds.send_embeds(description_lines, ctx)
-        cur.close()
-        conn.close()
+
+                # process info
+                players = []
+                curr_score = 999
+                char = ''
+                video = None
+                score_time = 0
+                for record in cur:
+                    if record[3] > curr_score:
+                        break
+                    elif record[3] == curr_score:
+                        players.append(record[2])
+                        continue
+                    char = record[0]
+                    stage = record[1]
+                    players.append(record[2])
+                    score_time = record[3]
+                    #print(stage)
+                    if len(record[4]) != 0:
+                        video = record[4][0] if video == None else video # what if no video for any record?
+
+                    curr_score = score_time
+                    # TEMP, should only access under vanilla query
+                    if stage.strip() == 'Ice Climbers':
+                        char = 'Ice Climbers' 
+
+                for player in players:
+                    if player not in record_count_dict:
+                        record_count_dict[player] = 1
+                    else:
+                        record_count_dict[player] += 1
+
+            # Sort by value https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+            result = dict(sorted(record_count_dict.items(), key=lambda item:item[1], reverse=True))
+
+
+            for player in result:
+                description_lines.append(
+                    f"{player} - {result[player]}"
+                )
+
+            await embeds.send_embeds(description_lines, ctx)
+            cur.close()
+            conn.close()
+
+        elif mode == 'hrc':
+            await ctx.defer()
+
+            is_TAS =  kwargs.get('tas', False)
+            
+            description_lines = [
+                f'Home Run Contest {"TAS" if is_TAS else "RTA"} World Record Count\n'
+            ]
+            
+            record_count_dict = {}
+            
+            conn = connect()
+            cur = conn.cursor()
+
+            
+            for char in HRC_CHARACTERS:
+                players = get_current_hrc_wr(char, is_TAS)[3].split(', ')
+            
+                for player in players:
+                    if (char == "Ganondorf" or char == "Ice Climbers") and not is_TAS:
+                        if player not in ['HRCtypo', 'Freezard']: # hard-code for now. Would need updating if other WR holders appear
+                            # alternatively, can do these characters last or something
+                            continue
+                    if player not in record_count_dict:
+                        record_count_dict[player] = 1
+                    else:
+                        record_count_dict[player] += 1
+
+            # Sort by value https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+            result = dict(sorted(record_count_dict.items(), key=lambda item:item[1], reverse=True))
+
+
+            for player in result:
+                description_lines.append(
+                    f"{player} - {result[player]}"
+                )
+
+            if not is_TAS:
+                description_lines.extend((
+                    f'\nPlayers with only Ganondorf and/or Ice Climbers WRs excluded',
+                    f'To see all WRs with ties, see the [score database](https://docs.google.com/spreadsheets/d/15wdkLsmSU2T9Os1j-lISe-XmXH-l3Awk9xBipYnTQCI/edit#gid=1511527150)'
+                ))
+
+            await embeds.send_embeds(description_lines, ctx)
+            cur.close()
+            conn.close()
+            
+
+        elif mode == 'events':
+            await ctx.defer()
+
+            is_TAS =  kwargs.get('tas', False)
+            
+            description_lines = [
+                f'Event Match {"TAS" if is_TAS else "RTA"} World Record Count\n'
+            ]
+            
+            record_count_dict = {}
+            
+            conn = connect()
+            cur = conn.cursor()
+
+           
+            for i in range(len(EVENTS)):
+                if i+1 == 17 or i+1 == 32: # I should have a separate loop later that adds counts for 17 and 32 if and only if the players on the list have it ... ?
+                    continue
+                players = get_current_event_wr(i+1, is_TAS)[1] # already a list lol it's not like the case in others
+            
+                for player in players:
+                    if player not in record_count_dict:
+                        record_count_dict[player] = 1
+                    else:
+                        record_count_dict[player] += 1
+            
+            # E17 and E32 processing 
+            for i in [17, 32]:
+                if i == 17 and is_TAS:
+                    continue
+                players = get_current_event_wr(i, is_TAS)[1] # already a list lol it's not like the case in others
+            
+                for player in players:
+                    if player not in record_count_dict:
+                        # they only have E17 or E32, ignore the addition
+                        continue
+                    else:
+                        record_count_dict[player] += 1
+
+            # Sort by value https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+            result = dict(sorted(record_count_dict.items(), key=lambda item:item[1], reverse=True))
+
+            for player in result:
+                description_lines.append(
+                    f"{player} - {result[player]}"
+                )
+            
+            if not is_TAS:
+                description_lines.extend((
+                    f'\nPlayers with only Event 17 or Event 32 WRs excluded',
+                    f'To see all WRs with ties, see the [score database](https://docs.google.com/spreadsheets/d/15wdkLsmSU2T9Os1j-lISe-XmXH-l3Awk9xBipYnTQCI/edit#gid=1817938638)'
+                ))
+
+
+            await embeds.send_embeds(description_lines, ctx)
+            cur.close()
+            conn.close()
+
+        elif mode == '10mm':
+            await ctx.defer()
+
+            is_TAS =  kwargs.get('tas', False)
+            
+            description_lines = [
+                f'10-Man Melee {"TAS" if is_TAS else "RTA"} World Record Count\n'
+            ]
+            
+            record_count_dict = {}
+            
+            conn = connect()
+            cur = conn.cursor()
+
+            for char in TENMM_CHARACTERS:
+                players = get_current_10mm_wr(char, is_TAS)[1].split(', ')
+            
+                for player in players:
+                    if player not in record_count_dict:
+                        record_count_dict[player] = 1
+                    else:
+                        record_count_dict[player] += 1
+
+            # Sort by value https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+            result = dict(sorted(record_count_dict.items(), key=lambda item:item[1], reverse=True))
+
+            for player in result:
+                description_lines.append(
+                    f"{player} - {result[player]}"
+                )
+
+            await embeds.send_embeds(description_lines, ctx)
+            cur.close()
+            conn.close()
