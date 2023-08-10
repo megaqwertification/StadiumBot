@@ -751,6 +751,17 @@ def register_owner_commands(bot: Client):
             description = f'Added Event {event_id}{" TAS" if is_tas else ""} record: {score} {"KOs" if event_type=="scored" else ""}by {player} at <{video}>' # TODO: add TAGS in print statement like the other commands
             await ctx.send(description)
             return
+        
+        elif str(prev_wr[0][3]) == score:
+            # Tied WR
+            wr_tie_str = f'Added Event {event_id}{" TAS" if is_tas else ""} record: [{score} by {player}]({video})'
+            description_lines.append(wr_tie_str)
+            player_str = ", ".join(prev_wr[1])
+            tied_with_str = f'Tied with [{player_str}]({prev_wr[0][4].pop()})'
+            description_lines.append(tied_with_str)
+            conn.commit()
+            await embeds.send_embeds(description_lines, ctx)
+            return
 
         improved_str = f'Improved Event {event_id}{" TAS" if is_tas else ""} record from [{prev_wr_details[3]} by {prev_wr_players}]({prev_wr_details[4].pop()}) to [{score} by {player}]({video}) {tags if tags != "" else ""}'
         description_lines.append(improved_str)
