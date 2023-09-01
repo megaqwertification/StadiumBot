@@ -65,7 +65,7 @@ def register_general_commands(bot: Client):
             stage_name = random.choice(BTT_STAGES)
             is_TAS = kwargs.get('tas', False)
             if is_SuS:
-                tags_list = [random.choice(list(BTT_SUS_TAGS.keys()) + [''])]
+                tags_list = [random.choice(list(BTT_SUS_TAGS.keys()))]
             else:
                 tags_list = []
             # Need to get ANY random record with this tag in its tag list
