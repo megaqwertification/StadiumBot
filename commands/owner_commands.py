@@ -558,6 +558,18 @@ def register_owner_commands(bot: Client):
             description = f'Added 10MM{" TAS" if is_tas else ""} record: {char} - {score_str} by {player} at <{video}> ({tags})'
             await ctx.send(description)
             return
+        
+        # This was done differently from other modes, you should standardize how all this is happening
+        elif str(prev_wr[0]) == str(score):
+            # Tied WR
+            wr_tie_str = f'Added 10MM{" TAS" if is_tas else ""} record: [{score} by {player}]({video})'
+            description_lines.append(wr_tie_str)
+            player_str = "".join((prev_wr[1]))
+            tied_with_str = f'Tied with [{player_str}]({prev_wr[2]})'
+            description_lines.append(tied_with_str)
+            conn.commit()
+            await embeds.send_embeds(description_lines, ctx)
+            return
 
         improved_str = f'Improved 10MM{" TAS" if is_tas else ""} record: {char} from [{prev_wr[0]} by {prev_wr[1]}]({prev_wr[2]}) to [{score_str} by {player}]({video}) {tags if tags != "" else ""}'
         description_lines.append(improved_str)
