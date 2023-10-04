@@ -399,7 +399,7 @@ def register_owner_commands(bot: Client):
         conn.commit()
         new_hrc_total = get_hrc_total(is_tas)
 
-        hrc_total_str = f'HRC {" TAS" if is_tas else ""} total improved from {old_hrc_total[0]}ft/{old_hrc_total[1]}m to {new_hrc_total[0]}ft/{new_hrc_total[1]}m'
+        hrc_total_str = f'HRC{" TAS" if is_tas else ""} total improved from {old_hrc_total[0]}ft/{old_hrc_total[1]}m to {new_hrc_total[0]}ft/{new_hrc_total[1]}m'
         description_lines.append(hrc_total_str)
 
         
