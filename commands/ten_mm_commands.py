@@ -6,6 +6,8 @@ from interactions import CommandContext, Option, OptionType, Choice
 from constants.general_constants import ALIASES, GUILD_IDS
 from constants.ten_mm_constants import TENMM_CHARACTERS, TENMM_BONUS_CHARACTERS
 
+from helper_functions.ten_mm_helper_functions import ten_mm_history_sort
+
 from formulas import get_char_name, frames_to_time_string, time_to_frames
 from db import connect
 
@@ -122,3 +124,51 @@ def register_10mm_commands(bot: Client):
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
         conn.close()
+
+    @bot.command(
+        name='10mm-wr-history',
+        description='Display history of 10MM RTA or TAS record',
+        scope=GUILD_IDS,
+        options=[
+            Option(
+                name='character',
+                description='Choose your character',
+                type=OptionType.STRING,
+                required=True,
+            ),
+            Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            )
+        ]
+    )
+
+    async def _10mm_wr_history(ctx: CommandContext, **kwargs):
+        char_input = kwargs.get("character")
+        char_name = get_char_name(char_input, ALIASES)
+        if char_name not in TENMM_CHARACTERS:
+            description = f'Please select a valid character'
+            await ctx.send(description, ephemeral=True)
+            return None
+        
+        is_TAS = kwargs.get('tas', False)
+
+        # Query database
+        conn = connect()
+        sql_q = f'SELECT * FROM ten_mm_table WHERE character=\'{char_name}\' AND tas={is_TAS} ORDER BY date ASC, score DESC;' #score DESC, date ASC;'
+        cur = conn.cursor()
+        cur.execute(sql_q)
+
+        # Organize records
+        description_lines = ten_mm_history_sort(cur)
+        
+        # Append title then reverse list
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}History of {char_name} 10MM WRs (YYYY-MM-DD)\n')
+        description_lines.reverse()
+
+        await embeds.send_embeds(description_lines, ctx)
+        conn.close()
+
+        return
