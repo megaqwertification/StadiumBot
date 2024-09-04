@@ -8,7 +8,7 @@ from commands.ten_mm_commands import register_10mm_commands
 from commands.owner_commands import register_owner_commands
 from commands.general_commands import register_general_commands
 
-STADIUM_BOT_DEV_TOKEN = os.getenv('STADIUM_BOT_TOKEN')
+STADIUM_BOT_DEV_TOKEN = os.getenv('STADIUM_BOT_DEV_TOKEN')
 bot = Client(token=STADIUM_BOT_DEV_TOKEN, intents=Intents.ALL)
 
 register_owner_commands(bot)
