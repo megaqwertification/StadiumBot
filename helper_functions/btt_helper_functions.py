@@ -1,6 +1,7 @@
 from db import connect
-from constants.btt_constants import BTT_CHARS_STAGE_COMMAND, BTT_STAGES
-from formulas import time_to_frames, frames_to_time_string
+from constants.btt_constants import BTT_CHARS_STAGE_COMMAND, BTT_STAGES, BTT_CHARACTERS
+from constants.general_constants import ALIASES
+from formulas import time_to_frames, frames_to_time_string, get_char_name
 from interactions import CommandContext
 
 def filter_btt_tags(tags_list: list, cur) -> list:
@@ -178,3 +179,94 @@ def get_stage_total(stage_name, is_TAS):
 
     conn.close()
     return (current_stage_total_frames, current_stage_total_time)
+
+
+
+
+
+
+def btt_wr_list(is_TAS, char_input):
+    '''
+    Parent function for btt_wr_list (WIP)
+    TODO: Call this function inside the bot command under commands/btt_commands.py -> _btt_wr_list()
+    CURRENT STATE: ONLY WORKS WITH BEST_TOTAL
+
+    Modified from btt_wr_list command
+
+    '''  
+    conn = connect()
+    cur = conn.cursor()
+    description_lines = []
+
+    for stage in BTT_STAGES:
+        cur = conn.cursor()
+        if stage == 'Seak':
+            continue
+        sql_q = f'SELECT * FROM btt_table WHERE character=\'{char_input}\' AND stage=\'{stage}\' AND tas={is_TAS} ORDER BY score ASC, date ASC;'
+      
+            
+        cur.execute(sql_q)
+        
+        cur = filter_btt_tags([], cur)
+        # print(cur)
+
+
+        # process info
+        players = []
+        curr_score = 999
+        char = ''
+        video = None
+        score_time = 0
+        for record in cur:
+            if record[3] > curr_score:
+                break
+            elif record[3] == curr_score:
+                players.append(record[2])
+                continue
+            char = record[0]
+            stage = record[1]
+            players.append(record[2])
+            score_time = record[3]
+            #print(stage)
+            if len(record[4]) != 0:
+                video = record[4][0] if video == None else video # what if no video for any record?
+
+            curr_score = score_time
+            # TEMP, should only access under vanilla query
+            if stage.strip() == 'Ice Climbers':
+                char = 'Ice Climbers' 
+
+        # description_lines.append(
+        #     f"{char.strip()} - [{score_time}]({video}) - {', '.join(players)}"
+        # )
+
+        # print('score_time')
+        # print(score_time)
+        # print('type score_time')
+        # print(type(score_time))
+
+
+        if float(score_time) != 0.0:
+            description_lines.append(float(score_time))
+        else:
+            description_lines.append(float('inf'))
+
+
+        # TEMP AGAIN JUST TO TEST CHAR QUERY
+        # if char_input != None:
+        #     description_lines.pop()
+        #     # description_lines.append(
+        #     #     f"{stage.strip()} - [{score_time}]({video}) - {', '.join(players)}"
+        #     # )
+        #     if float(score_time) != None:
+        #         description_lines.append(float(score_time))
+        #     else:
+        #         description_lines.append(float('inf'))
+        # if stage.strip() != 'Seak': # have to strip bcs we're getting from the database instead of the list .... bad design idiot rename ur vars rofl
+        #     total_high_score_f += int(time_to_frames(score_time))
+        
+        curr_score = 999
+
+    conn.close()
+
+    return description_lines
