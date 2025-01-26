@@ -9,6 +9,7 @@ from constants.btt_constants import BTT_STAGES, BTT_CHARACTERS, BTT_CHARS_STAGE_
 from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from helper_functions.btt_helper_functions import filter_btt_tags
+import best_total 
 
 from db import connect
 
@@ -169,6 +170,9 @@ def register_btt_commands(bot: Client):
     )
 
     async def _btt_wr_list(ctx: CommandContext, **kwargs):
+        '''
+        TODO: modify so that it uses the btt_wr_list() parent function, and sends embeds accordingly.
+        '''
         is_TAS =  kwargs.get('tas', False)
         char_input = kwargs.get('char', None)
         if char_input != None:
@@ -544,3 +548,51 @@ def register_btt_commands(bot: Client):
 
         #cur.close() # not necessary if we're changing cur from cur to list
         conn.close()
+
+    @bot.command(
+        name='best-total',
+        description='Best Total Mapping ()',
+        scope=GUILD_IDS,
+        options=[
+            Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            ),
+            Option(
+                name='full_mm',
+                description='SuS tags (comma separated, case sensitive)',
+                type=OptionType.BOOLEAN,
+                required=False
+            )
+        ]  
+    )
+
+    async def _best_total(ctx: CommandContext, **kwargs):
+        is_TAS = kwargs.get("tas", False)
+
+        if is_TAS:
+            await ctx.defer(ephemeral=True)
+            description = f'This command will be enabled when we fill the tas matrix :happysquare:'
+            await ctx.send(description, ephemeral=True)
+            return
+        
+        await ctx.defer()
+        is_full_mm = kwargs.get("full_mm", False)
+        result = best_total.calculate_best_total(is_TAS, is_full_mm)
+        THS = result.pop()
+
+        description_lines = []
+        
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}Best Total {"(Full Mismatch)" if is_full_mm else ""}\n')
+        for char_stage in result:
+            description_lines.append(f'{char_stage[0]} on {char_stage[1]} ({char_stage[2]})')
+        description_lines.append(f'\nTotal High Score: {THS}')
+        # print(description_lines)
+        
+
+
+        await embeds.send_embeds(description_lines, ctx)
+
+        return
