@@ -438,16 +438,21 @@ def register_general_commands(bot: Client):
         for record in records:
             mode, character, score, player, date, sources, tas, extras = record
 
-            video = sources[0] if sources else False
             extra = ""
             if mode == "Event" and extras == "scored":
                 extra = " KOs"
             elif mode == "HRC":
                 extra = f"ft/{extras}m"
 
+            video = sources[0] if sources else False
+            if video:
+                formatted_score = f'[{score}{extra}]({video})'
+            else:
+                formatted_score = f'{score}{extra}'
+
             description_lines.append(
-                f'{mode} {character} - [{score}{extra}]({video}) - {player}{" [TAS]" if tas else ""} ({date})'
-            ) 
+                f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
+            )
 
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
