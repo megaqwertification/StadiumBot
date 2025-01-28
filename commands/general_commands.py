@@ -349,10 +349,10 @@ def register_general_commands(bot: Client):
         description='Query the latest world records',
         scope=GUILD_IDS
     )
-    
+
     async def latest(ctx: CommandContext, **kwargs):
         await ctx.defer()
-        
+
         conn = connect()
         cur = conn.cursor()
 
@@ -369,7 +369,10 @@ def register_general_commands(bot: Client):
             tas AS tas,
             NULL AS extras
         FROM btt_table
-        WHERE character = stage AND date IS NOT NULL
+        WHERE (character = stage 
+           OR (character = 'Sheik' AND stage = 'Zelda') 
+           OR (character = 'Popo' AND stage = 'Ice Climbers')) 
+          AND date IS NOT NULL
         ORDER BY date DESC
         LIMIT 10
         )
@@ -447,6 +450,5 @@ def register_general_commands(bot: Client):
             ) 
 
         await embeds.send_embeds(description_lines, ctx)
-
         cur.close()
         conn.close()
