@@ -347,91 +347,112 @@ def register_general_commands(bot: Client):
     @bot.command(
         name='latest',
         description='Query the latest world records',
-        scope=GUILD_IDS
+        scope=GUILD_IDS,
+        options=[
+            Option(
+                name='mode',
+                description='Choose your mode (BTT, HRC, 10MM, Events)',
+                type=OptionType.STRING,
+                choices=[
+                    Choice(name='BTT', value='BTT'),
+                    Choice(name='HRC', value='HRC'),
+                    Choice(name='10MM', value='10MM'),
+                    Choice(name='Events', value='Event')
+                ],
+                required=False,
+            ),
+        ]
     )
 
     async def latest(ctx: CommandContext, **kwargs):
         await ctx.defer()
 
+        mode = kwargs.get('mode')
+
         conn = connect()
         cur = conn.cursor()
 
+        # Base query
         query = """
         (
-        -- BTT mode: Only rows where character = stage
-        SELECT 
-            'BTT' AS mode,
-            TRIM(character) AS character,
-            score AS score,
-            player AS player,
-            date::date AS date,
-            sources AS sources,
-            tas AS tas,
-            NULL AS extras
-        FROM btt_table
-        WHERE (character = stage 
-           OR (character = 'Sheik' AND stage = 'Zelda') 
-           OR (character = 'Popo' AND stage = 'Ice Climbers')) 
-      AND NOT (character = 'Zelda' AND stage = 'Zelda') 
-      AND NOT (character = 'Ice Climbers' AND stage = 'Ice Climbers') 
-          AND date IS NOT NULL
-        ORDER BY date DESC
-        LIMIT 10
+            -- BTT mode: Only rows where character = stage
+            SELECT 
+                'BTT' AS mode,
+                TRIM(character) AS character,
+                score AS score,
+                player AS player,
+                date::date AS date,
+                sources AS sources,
+                tas AS tas,
+                NULL AS extras
+            FROM btt_table
+            WHERE (character = stage 
+                OR (character = 'Sheik' AND stage = 'Zelda') 
+                OR (character = 'Popo' AND stage = 'Ice Climbers')) 
+           AND NOT (character = 'Zelda' AND stage = 'Zelda') 
+           AND NOT (character = 'Ice Climbers' AND stage = 'Ice Climbers') 
+               AND date IS NOT NULL
         )
         UNION ALL
         (
-        -- Event mode: Use event_id as character
-        SELECT 
-            'Event' AS mode,
-            event_id::text AS character,
-            score AS score,
-            player AS player,
-            date::date AS date,
-            sources AS sources,
-            tas AS tas,
-            type::text AS extras
-        FROM event_table
-        WHERE date IS NOT NULL
-        ORDER BY date DESC
-        LIMIT 10
+            -- Event mode: Use event_id as character
+            SELECT 
+                'Event' AS mode,
+                event_id::text AS character,
+                score AS score,
+                player AS player,
+                date::date AS date,
+                sources AS sources,
+                tas AS tas,
+                type::text AS extras
+            FROM event_table
+            WHERE date IS NOT NULL
         )
         UNION ALL
         (
-        -- HRC mode: Use score_ft as score
-        SELECT 
-            'HRC' AS mode,
-            TRIM(character) AS character,
-            score_ft AS score,
-            player AS player,
-            date::date AS date,
-            sources AS sources,
-            tas AS tas,
-            score_m::text AS extras
-        FROM hrc_table
-        WHERE date IS NOT NULL
-        ORDER BY date DESC
-        LIMIT 10
+            -- HRC mode: Use score_ft as score
+            SELECT 
+                'HRC' AS mode,
+                TRIM(character) AS character,
+                score_ft AS score,
+                player AS player,
+                date::date AS date,
+                sources AS sources,
+                tas AS tas,
+                score_m::text AS extras
+            FROM hrc_table
+            WHERE date IS NOT NULL
         )
         UNION ALL
         (
-        -- 10MM mode: Use default format
-        SELECT 
-            '10MM' AS mode,
-            TRIM(character) AS character,
-            score AS score,
-            player AS player,
-            date::date AS date,
-            sources AS sources,
-            tas AS tas,
-            NULL AS extras
-        FROM ten_mm_table
-        WHERE date IS NOT NULL
-        ORDER BY date DESC
-        LIMIT 10
+            -- 10MM mode: Use default format
+            SELECT 
+                '10MM' AS mode,
+                TRIM(character) AS character,
+                score AS score,
+                player AS player,
+                date::date AS date,
+                sources AS sources,
+                tas AS tas,
+                NULL AS extras
+            FROM ten_mm_table
+            WHERE date IS NOT NULL
         )
+        """
+
+        # Apply the mode filter if provided
+        if mode:
+            query = f"""
+            SELECT * FROM ({query})
+            WHERE mode = '{mode}'
+            """
+
+        # Fetch the ten most recent records
+        query += """
         ORDER BY date DESC
         LIMIT 10;
         """
+
         cur.execute(query)
         records = cur.fetchall()
 
@@ -447,10 +468,7 @@ def register_general_commands(bot: Client):
                 extra = f"ft/{extras}m"
 
             video = sources[0] if sources else False
-            if video:
-                formatted_score = f'[{score}{extra}]({video})'
-            else:
-                formatted_score = f'{score}{extra}'
+            formatted_score = f'[{score}{extra}]({video})' if video else f'{score}{extra}'
 
             description_lines.append(
                 f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
