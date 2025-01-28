@@ -343,3 +343,110 @@ def register_general_commands(bot: Client):
             await embeds.send_embeds(description_lines, ctx)
             cur.close()
             conn.close()
+
+    @bot.command(
+        name='latest',
+        description='Query the latest world records',
+        scope=GUILD_IDS
+    )
+    
+    async def latest(ctx: CommandContext, **kwargs):
+        await ctx.defer()
+        
+        conn = connect()
+        cur = conn.cursor()
+
+        query = """
+        (
+        -- BTT mode: Only rows where character = stage
+        SELECT 
+            'BTT' AS mode,
+            TRIM(character) AS character,
+            score AS score,
+            player AS player,
+            date::date AS date,
+            sources AS sources,
+            tas AS tas,
+            NULL AS extras
+        FROM btt_table
+        WHERE character = stage AND date IS NOT NULL
+        ORDER BY date DESC
+        LIMIT 10
+        )
+        UNION ALL
+        (
+        -- Event mode: Use event_id as character
+        SELECT 
+            'Event' AS mode,
+            event_id::text AS character,
+            score AS score,
+            player AS player,
+            date::date AS date,
+            sources AS sources,
+            tas AS tas,
+            type::text AS extras
+        FROM event_table
+        WHERE date IS NOT NULL
+        ORDER BY date DESC
+        LIMIT 10
+        )
+        UNION ALL
+        (
+        -- HRC mode: Use score_ft as score
+        SELECT 
+            'HRC' AS mode,
+            TRIM(character) AS character,
+            score_ft AS score,
+            player AS player,
+            date::date AS date,
+            sources AS sources,
+            tas AS tas,
+            score_m::text AS extras
+        FROM hrc_table
+        WHERE date IS NOT NULL
+        ORDER BY date DESC
+        LIMIT 10
+        )
+        UNION ALL
+        (
+        -- 10MM mode: Use default format
+        SELECT 
+            '10MM' AS mode,
+            TRIM(character) AS character,
+            score AS score,
+            player AS player,
+            date::date AS date,
+            sources AS sources,
+            tas AS tas,
+            NULL AS extras
+        FROM ten_mm_table
+        WHERE date IS NOT NULL
+        ORDER BY date DESC
+        LIMIT 10
+        )
+        ORDER BY date DESC
+        LIMIT 10;
+        """
+        cur.execute(query)
+        records = cur.fetchall()
+
+        description_lines = ['Latest World Records\n']
+
+        for record in records:
+            mode, character, score, player, date, sources, tas, extras = record
+
+            video = sources[0] if sources else False
+            extra = ""
+            if mode == "Event" and extras == "scored":
+                extra = " KOs"
+            elif mode == "HRC":
+                extra = f"ft/{extras}m"
+
+            description_lines.append(
+                f'{mode} {character} - [{score}{extra}]({video}) - {player}{" [TAS]" if tas else ""} ({date})'
+            ) 
+
+        await embeds.send_embeds(description_lines, ctx)
+
+        cur.close()
+        conn.close()
