@@ -372,6 +372,8 @@ def register_general_commands(bot: Client):
         WHERE (character = stage 
            OR (character = 'Sheik' AND stage = 'Zelda') 
            OR (character = 'Popo' AND stage = 'Ice Climbers')) 
+      AND NOT (character = 'Zelda' AND stage = 'Zelda') 
+      AND NOT (character = 'Ice Climbers' AND stage = 'Ice Climbers') 
           AND date IS NOT NULL
         ORDER BY date DESC
         LIMIT 10
