@@ -361,6 +361,16 @@ def register_general_commands(bot: Client):
                 ],
                 required=False,
             ),
+            Option(
+                name='rta_tas',
+                description='Filter by RTA or TAS',
+                type=OptionType.STRING,
+                choices=[
+                    Choice(name='RTA', value='rta'),
+                    Choice(name='TAS', value='tas')
+                ],
+                required=False,
+            ),
         ]
     )
 
@@ -368,6 +378,7 @@ def register_general_commands(bot: Client):
         await ctx.defer()
 
         mode = kwargs.get('mode')
+        rta_tas = kwargs.get('rta_tas')
 
         conn = connect()
         cur = conn.cursor()
@@ -445,6 +456,14 @@ def register_general_commands(bot: Client):
             query = f"""
             SELECT * FROM ({query})
             WHERE mode = '{mode}'
+            """
+
+        # Apply the RTA/TAS filter if provided
+        if rta_tas:
+            tas_filter = "true" if rta_tas == "tas" else "false"
+            query = f"""
+            SELECT * FROM ({query})
+            WHERE tas = {tas_filter}
             """
 
         # Fetch the ten most recent records
