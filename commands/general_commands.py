@@ -377,8 +377,8 @@ def register_general_commands(bot: Client):
     async def latest(ctx: CommandContext, **kwargs):
         await ctx.defer()
 
-        mode = kwargs.get('mode')
-        rta_tas = kwargs.get('rta_tas')
+        mode = kwargs.get('mode', None)
+        rta_tas = kwargs.get('rta_tas', None)
 
         conn = connect()
         cur = conn.cursor()
@@ -454,7 +454,7 @@ def register_general_commands(bot: Client):
         # Apply the mode filter if provided
         if mode:
             query = f"""
-            SELECT * FROM ({query})
+            SELECT * FROM ({query}) AS mode_filtered
             WHERE mode = '{mode}'
             """
 
@@ -462,7 +462,7 @@ def register_general_commands(bot: Client):
         if rta_tas:
             tas_filter = "true" if rta_tas == "tas" else "false"
             query = f"""
-            SELECT * FROM ({query})
+            SELECT * FROM ({query}) AS rta_tas_filtered
             WHERE tas = {tas_filter}
             """
 
@@ -475,7 +475,7 @@ def register_general_commands(bot: Client):
         cur.execute(query)
         records = cur.fetchall()
 
-        description_lines = ['Latest World Records\n']
+        description_lines = [f'Latest {mode if mode else ""} {rta_tas.upper() if rta_tas else ""} World Records\n']
 
         for record in records:
             mode, character, score, player, date, sources, tas, extras = record
