@@ -371,14 +371,26 @@ def register_general_commands(bot: Client):
                 ],
                 required=False,
             ),
+            Option(
+                name='is_mismatch',
+                description='default: False (Only available when selecting BTT mode)',
+                type=OptionType.BOOLEAN,
+                required=False,
+            )
         ]
     )
 
     async def latest(ctx: CommandContext, **kwargs):
-        await ctx.defer()
-
         mode = kwargs.get('mode', None)
         rta_tas = kwargs.get('rta_tas', None)
+        is_mm = kwargs.get('is_mismatch', False)
+        if is_mm and mode != 'BTT':
+            await ctx.defer(ephemeral=True)
+            description = f'Cannot only select mismatch flag if BTT is the mode selected'
+            await ctx.send(description, ephemeral=True)
+            return
+
+        await ctx.defer()
 
         conn = connect()
         cur = conn.cursor()
@@ -395,6 +407,7 @@ def register_general_commands(bot: Client):
                 date::date AS date,
                 sources AS sources,
                 tas AS tas,
+                tags AS tags,
                 NULL AS extras
             FROM btt_table
             WHERE (character = stage 
@@ -415,6 +428,7 @@ def register_general_commands(bot: Client):
                 date::date AS date,
                 sources AS sources,
                 tas AS tas,
+                tags AS tags,
                 type::text AS extras
             FROM event_table
             WHERE date IS NOT NULL
@@ -430,6 +444,7 @@ def register_general_commands(bot: Client):
                 date::date AS date,
                 sources AS sources,
                 tas AS tas,
+                tags AS tags,
                 score_m::text AS extras
             FROM hrc_table
             WHERE date IS NOT NULL
@@ -445,6 +460,7 @@ def register_general_commands(bot: Client):
                 date::date AS date,
                 sources AS sources,
                 tas AS tas,
+                tags AS tags,
                 NULL AS extras
             FROM ten_mm_table
             WHERE date IS NOT NULL
@@ -453,10 +469,34 @@ def register_general_commands(bot: Client):
 
         # Apply the mode filter if provided
         if mode:
-            query = f"""
-            SELECT * FROM ({query}) AS mode_filtered
-            WHERE mode = '{mode}'
-            """
+            if mode == 'BTT' and is_mm:
+                base_mm_query = """
+                (
+                    -- BTT mode: Only rows with mismatch enabled (allows zelda, dual ICs, and char != stage)
+                    SELECT 
+                        'BTT' AS mode,
+                        TRIM(character) AS character,
+                        TRIM(stage) AS stage,
+                        score AS score,
+                        player AS player,
+                        date::date AS date,
+                        sources AS sources,
+                        tas AS tas,
+                        tags AS tags,
+                        NULL AS extras
+                    FROM btt_table
+                    WHERE date IS NOT NULL
+                )
+                """
+                query = f"""
+                SELECT * FROM ({base_mm_query}) AS mode_filtered
+                WHERE mode = '{mode}'
+                """
+            else:
+                query = f"""
+                SELECT * FROM ({query}) AS mode_filtered
+                WHERE mode = '{mode}'
+                """
 
         # Apply the RTA/TAS filter if provided
         if rta_tas:
@@ -474,11 +514,22 @@ def register_general_commands(bot: Client):
 
         cur.execute(query)
         records = cur.fetchall()
+        # filter out sus tags for btt
+        if mode == 'BTT':
+            # TODO: filter_btt_tags doesn't apply here well, need to filter manually. Refactor eventually
+            # records = filter_btt_tags([], records)
+            tags_to_filter = ['1T', 'AR', 'LSS','BSS', 'RSS', 'TSS']
+            btt_filtered_records = list(cur)
+            for tag in tags_to_filter:
+                btt_filtered_records = [record for record in btt_filtered_records if not set(list(tag)).issubset(record[tags])]
 
-        description_lines = [f'Latest {mode if mode else ""} {rta_tas.upper() if rta_tas else ""} World Records\n']
+        description_lines = [f'Latest {"Mismatch" if is_mm else ""} {mode if mode else ""} {rta_tas.upper() if rta_tas else ""} World Records\n']
 
         for record in records:
-            mode, character, score, player, date, sources, tas, extras = record
+            if is_mm and mode == 'BTT':
+                mode, character, stage, score, player, date, sources, tas, tags, extras = record
+            else:
+                mode, character, score, player, date, sources, tas, tags, extras = record
 
             extra = ""
             if mode == "Event" and extras == "scored":
@@ -489,9 +540,16 @@ def register_general_commands(bot: Client):
             video = sources[0] if sources else False
             formatted_score = f'[{score}{extra}]({video})' if video else f'{score}{extra}'
 
-            description_lines.append(
-                f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
-            )
+            # add different formatting for mismatch btt
+            if is_mm and mode == 'BTT':
+                description_lines.append(
+                    f'{mode} {character}/{stage} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
+                )
+            else:
+                description_lines.append(
+                    f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
+                )
+
 
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
