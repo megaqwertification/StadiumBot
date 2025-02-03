@@ -267,7 +267,7 @@ def register_general_commands(bot: Client):
 
            
             for i in range(len(EVENTS)):
-                if i+1 == 17 or i+1 == 32: # I should have a separate loop later that adds counts for 17 and 32 if and only if the players on the list have it ... ?
+                if i+1 == 32: # I should have a separate loop later that adds counts for 1732 if and only if the players on the list have it ... ?
                     continue
                 players = get_current_event_wr(i+1, is_TAS)[1] # already a list lol it's not like the case in others
             
@@ -277,15 +277,14 @@ def register_general_commands(bot: Client):
                     else:
                         record_count_dict[player] += 1
             
-            # E17 and E32 processing 
-            for i in [17, 32]:
-                if i == 17 and is_TAS:
-                    continue
+            # E32 processing 
+            # TODO: change the logic, doesn't need a for loop loooool
+            for i in [32]:
                 players = get_current_event_wr(i, is_TAS)[1] # already a list lol it's not like the case in others
             
                 for player in players:
                     if player not in record_count_dict:
-                        # they only have E17 or E32, ignore the addition
+                        # they only have E32, ignore the addition
                         continue
                     else:
                         record_count_dict[player] += 1
@@ -300,7 +299,7 @@ def register_general_commands(bot: Client):
             
             if not is_TAS:
                 description_lines.extend((
-                    f'\nPlayers with only Event 17 or Event 32 WRs excluded',
+                    f'\nPlayers with only Event 32 WRs excluded',
                     f'To see all WRs with ties, see the [score database](https://docs.google.com/spreadsheets/d/15wdkLsmSU2T9Os1j-lISe-XmXH-l3Awk9xBipYnTQCI/edit#gid=1817938638)'
                 ))
 

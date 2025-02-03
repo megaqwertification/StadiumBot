@@ -83,7 +83,7 @@ def register_event_commands(bot: Client):
             counter += 1 # probably a better way to do this with len or something...
 
         players_string = ", ".join(players)
-        if int(event_id) == 17 or (int(event_id) == 32 and is_TAS == False):
+        if (int(event_id) == 32 and is_TAS == False):
                 players_string = 'many'
         event_name = EVENTS[int(event_id)-1]
 
@@ -157,7 +157,7 @@ def register_event_commands(bot: Client):
                     players.append(record[1])
                     continue
                     # TODO: implement video record if no WR holder(s) have video
-                    # TODO: implement E17/32 "many" holders, or just for WR holders where it's more than 5
+                    # TODO: implement E32 "many" holders, or just for WR holders where it's more than 5
                 players.append(record[1])
                 score = record[3]
                 if event_type == 'timed':
@@ -172,7 +172,7 @@ def register_event_commands(bot: Client):
                 counter += 1 # probably a better way to do this with len or something...
 
             players_string = ", ".join(players)
-            if int(event_id) == 17 or (int(event_id) == 32 and is_TAS == False):
+            if (int(event_id) == 32 and is_TAS == False):
                 players_string = 'many'
             KO_string = " KOs" if event_type == "scored" else ""
             description_lines.append( 
