@@ -66,7 +66,7 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='date',
-                description='yyyy-mm-dd',
+                description='yyyy-mm-dd, optional HH:MM',
                 type=OptionType.STRING,
                 required=False,                
             ),
@@ -188,7 +188,7 @@ def register_owner_commands(bot: Client):
 
 
         conn = connect()
-        sql_q = f"INSERT INTO btt_table VALUES('{char}', '{stage}', '{player}', {score_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, {is_debug}, '{tags_str}', '{ver}');"
+        sql_q = f"INSERT INTO btt_table VALUES('{char}', '{stage}', '{player}', {score_str}, '{sources_str}', '{date} America/Toronto', {is_tas}, {is_emulator}, {is_debug}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
         conn.commit()
@@ -269,7 +269,7 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='date',
-                description='yyyy-mm-dd',
+                description='yyyy-mm-dd, optional HH:MM',
                 type=OptionType.STRING,
                 required=False,                
             ),
@@ -377,7 +377,7 @@ def register_owner_commands(bot: Client):
 
 
         conn = connect()
-        sql_q = f"INSERT INTO hrc_table VALUES('{char}', '{player}', {score_ft_str}, {score_m_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
+        sql_q = f"INSERT INTO hrc_table VALUES('{char}', '{player}', {score_ft_str}, {score_m_str}, '{sources_str}', '{date} America/Toronto', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
 
@@ -442,7 +442,7 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='date',
-                description='yyyy-mm-dd',
+                description='yyyy-mm-dd, optional HH:MM',
                 type=OptionType.STRING,
                 required=False,                
             ),
@@ -548,7 +548,7 @@ def register_owner_commands(bot: Client):
 
 
         conn = connect()
-        sql_q = f"INSERT INTO ten_mm_table VALUES('{char}', '{player}', {score_str}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
+        sql_q = f"INSERT INTO ten_mm_table VALUES('{char}', '{player}', {score_str}, '{sources_str}', '{date} America/Toronto', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
 
@@ -635,7 +635,7 @@ def register_owner_commands(bot: Client):
             ),
             Option(
                 name='date',
-                description='yyyy-mm-dd',
+                description='yyyy-mm-dd, optional HH:MM',
                 type=OptionType.STRING,
                 required=False,                
             ),
@@ -712,7 +712,7 @@ def register_owner_commands(bot: Client):
         sources = kwargs.get('sources', '') 
         # TODO: add check_source function and update source function
         
-        date = kwargs.get('date', '') # default system time so it auto corrects to UTC+00:00, when you're submitting. otherwise unknown
+        date = kwargs.get('date', '') # default system time so it auto corrects to UTC+00:00, when you're submitting. otherwise unknown.
         # TODO: add check_date function
 
         is_tas = kwargs.get('tas', False)
@@ -745,7 +745,7 @@ def register_owner_commands(bot: Client):
         description_lines = []
 
         conn = connect()
-        sql_q = f"INSERT INTO event_table VALUES({event_id}, '{player}', '{event_type}', {score}, '{sources_str}', '{date}', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
+        sql_q = f"INSERT INTO event_table VALUES({event_id}, '{player}', '{event_type}', {score}, '{sources_str}', '{date} America/Toronto', {is_tas}, {is_emulator}, '{tags_str}', '{ver}');"
         cur = conn.cursor()
         cur.execute(sql_q)
 
