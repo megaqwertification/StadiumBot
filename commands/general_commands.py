@@ -404,7 +404,7 @@ def register_general_commands(bot: Client):
                 TRIM(character) AS character,
                 score AS score,
                 player AS player,
-                date::date AS date,
+                date AT TIME ZONE 'America/Toronto' AS date,
                 sources AS sources,
                 tas AS tas,
                 tags AS tags,
@@ -425,7 +425,7 @@ def register_general_commands(bot: Client):
                 event_id::text AS character,
                 score AS score,
                 player AS player,
-                date::date AS date,
+                date AT TIME ZONE 'America/Toronto' AS date,
                 sources AS sources,
                 tas AS tas,
                 tags AS tags,
@@ -441,7 +441,7 @@ def register_general_commands(bot: Client):
                 TRIM(character) AS character,
                 score_ft AS score,
                 player AS player,
-                date::date AS date,
+                date AT TIME ZONE 'America/Toronto' AS date,
                 sources AS sources,
                 tas AS tas,
                 tags AS tags,
@@ -457,7 +457,7 @@ def register_general_commands(bot: Client):
                 TRIM(character) AS character,
                 score AS score,
                 player AS player,
-                date::date AS date,
+                date AT TIME ZONE 'America/Toronto' AS date,
                 sources AS sources,
                 tas AS tas,
                 tags AS tags,
@@ -479,7 +479,7 @@ def register_general_commands(bot: Client):
                         TRIM(stage) AS stage,
                         score AS score,
                         player AS player,
-                        date::date AS date,
+                        date AT TIME ZONE 'America/Toronto' AS date,
                         sources AS sources,
                         tas AS tas,
                         tags AS tags,
@@ -540,14 +540,17 @@ def register_general_commands(bot: Client):
             video = sources[0] if sources else False
             formatted_score = f'[{score}{extra}]({video})' if video else f'{score}{extra}'
 
+            # Extract date (YYYY-MM-DD)
+            formatted_date = date.date()
+
             # add different formatting for mismatch btt
             if is_mm and mode == 'BTT':
                 description_lines.append(
-                    f'{mode} {character}/{stage} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
+                    f'{mode} {character}/{stage} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({formatted_date})'
                 )
             else:
                 description_lines.append(
-                    f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({date})'
+                    f'{mode} {character} - {formatted_score} - {player}{" [TAS]" if tas else ""} ({formatted_date})'
                 )
 
 
