@@ -10,6 +10,7 @@ from formulas import get_char_name, time_to_frames, frames_to_time_string
 
 from helper_functions.btt_helper_functions import filter_btt_tags
 import best_total 
+import worst_total
 
 from db import connect
 
@@ -562,7 +563,7 @@ def register_btt_commands(bot: Client):
             ),
             Option(
                 name='full_mm',
-                description='SuS tags (comma separated, case sensitive)',
+                description='default: not full_mm',
                 type=OptionType.BOOLEAN,
                 required=False
             )
@@ -586,6 +587,54 @@ def register_btt_commands(bot: Client):
         description_lines = []
         
         description_lines.append(f'{"(TAS) " if is_TAS else ""}Best Total {"(Full Mismatch)" if is_full_mm else ""}\n')
+        for char_stage in result:
+            description_lines.append(f'{char_stage[0]} on {char_stage[1]} ({char_stage[2]})')
+        description_lines.append(f'\nTotal High Score: {THS}')
+        # print(description_lines)
+        
+
+
+        await embeds.send_embeds(description_lines, ctx)
+
+        return
+    
+    @bot.command(
+        name='worst-total',
+        description='Worst Total Mapping ()',
+        scope=GUILD_IDS,
+        options=[
+            Option(
+                name='tas',
+                description='default: RTA',
+                type=OptionType.BOOLEAN,
+                required=False,
+            ),
+            Option(
+                name='full_mm',
+                description='default: not full_mm',
+                type=OptionType.BOOLEAN,
+                required=False
+            )
+        ]  
+    )
+
+    async def _worst_total(ctx: CommandContext, **kwargs):
+        is_TAS = kwargs.get("tas", False)
+
+        if is_TAS:
+            await ctx.defer(ephemeral=True)
+            description = f'This command will be enabled when we fill the tas matrix :happysquare:'
+            await ctx.send(description, ephemeral=True)
+            return
+        
+        await ctx.defer()
+        is_full_mm = kwargs.get("full_mm", False)
+        result = worst_total.calculate_worst_total(is_TAS, is_full_mm)
+        THS = result.pop()
+
+        description_lines = []
+        
+        description_lines.append(f'{"(TAS) " if is_TAS else ""}Worst Total {"(Full Mismatch)" if is_full_mm else ""}\n')
         for char_stage in result:
             description_lines.append(f'{char_stage[0]} on {char_stage[1]} ({char_stage[2]})')
         description_lines.append(f'\nTotal High Score: {THS}')
