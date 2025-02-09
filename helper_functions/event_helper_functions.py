@@ -152,3 +152,74 @@ def get_event_total(event_type, is_TAS):
             is_TAS = original_is_TAS
 
         return curr_total
+    
+
+def event_history_sort(cur_handle, event_id):
+    '''
+    For the event history command
+    '''
+    description_lines = []
+
+    if int(event_id) in SCORED_EVENTS:
+        prev_score = 0
+        
+        for record in cur_handle:
+            query_event_id, query_player, query_type, query_score, query_sources, query_date, query_tas, query_ver = record
+            sources = query_sources
+            if len(sources) != 0:
+                video = sources[0] 
+            else:
+                video = None
+            tied_player = None
+            player = query_player
+            score = int(query_score)
+            if score <= prev_score:
+                continue
+            prev_score = score
+            # TODO: compare date and add to history if record was beaten in the same day AND does not have timestamp
+            # maybe can check YT source of video
+            date = query_date.date()
+            score_str = str(score)
+            
+            if video == None:
+                description_lines.append(
+                    f'({date}) - {score_str + " KOs"} - {player}'
+                )
+            else:
+                description_lines.append(
+                    f'({date}) - [{score_str + " KOs" }]({video}) - {player}'
+                )
+    else:
+        prev_score = 999
+
+        for record in cur_handle:
+            query_event_id, query_player, query_type, query_score, query_sources, query_date, query_tas, query_ver = record
+            sources = query_sources
+            if len(sources) != 0:
+                video = sources[0] 
+            else:
+                video = None
+            tied_player = None
+            player = query_player
+            score = float(query_score)
+            if score >= prev_score:
+                continue
+            prev_score = score
+            # TODO: compare date and add to history if record was beaten in the same day AND does not have timestamp
+            # maybe can check YT source of video
+            date = query_date.date()
+            score_str = "{:.2f}".format(score)
+
+            if video == None:
+                description_lines.append(
+                    f'({date}) - {score_str} - {player}'
+                )
+            else:
+                description_lines.append(
+                    f'({date}) - [{score_str}]({video}) - {player}'
+                )
+
+
+
+
+    return description_lines

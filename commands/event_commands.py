@@ -1,8 +1,10 @@
 from interactions import Client, CommandContext, Embed, Option, OptionType
 from constants.general_constants import GUILD_IDS
-from constants.event_constants import EVENTS, NO_TAS_EVENT_WRS, RTA_BEATS_TAS_EVENTS
+from constants.event_constants import EVENTS, NO_TAS_EVENT_WRS, RTA_BEATS_TAS_EVENTS, SCORED_EVENTS
 from db import connect
 from formulas import frames_to_time_string, time_to_frames
+from helper_functions.event_helper_functions import event_history_sort
+
 import embeds
 
 def get_event_type(id):
@@ -193,3 +195,50 @@ def register_event_commands(bot: Client):
         await embeds.send_embeds(description_lines, ctx)
         cur.close()
         conn.close()
+
+    # @bot.command(
+    #     name='event-wr-history',
+    #     description='Display WR history for Event match',
+    #     scope=GUILD_IDS,
+    #     options=[
+    #         Option(
+    #             name='event_id',
+    #             description='Choose your character',
+    #             type=OptionType.STRING,
+    #             required=True,
+    #         ),
+    #         #option: TAS
+    #         Option(
+    #             name='tas',
+    #             description='RTA or TAS',
+    #             type=OptionType.BOOLEAN,
+    #             required=False,
+    #         ),
+    #     ]
+    # )
+
+    # async def _event_wr_history(ctx: CommandContext, **kwargs):
+    #     await ctx.defer()
+    #     event_id = kwargs.get('event_id')
+    #     is_TAS = kwargs.get("tas", False)
+
+    #     # Query database
+    #     conn = connect()
+    #     if event_id in SCORED_EVENTS:
+    #         sql_q = f'SELECT event_id, player, type, score, sources, date, tas, ver FROM event_table WHERE event_id=\'{event_id}\' AND tas={is_TAS} ORDER BY date ASC, score ASC;'
+    #     else:
+    #         sql_q = f'SELECT event_id, player, type, score, sources, date, tas, ver FROM event_table WHERE event_id=\'{event_id}\' AND tas={is_TAS} ORDER BY date ASC, score DESC;'
+    #     cur = conn.cursor()
+    #     cur.execute(sql_q)
+
+    #     # Organize records
+    #     description_lines = event_history_sort(cur, event_id)
+        
+    #     # Append title then reverse list
+    #     description_lines.append(f'{"(TAS) " if is_TAS else ""}History of Event {event_id} Event WRs (YYYY-MM-DD)\n')
+    #     description_lines.reverse()
+
+    #     await embeds.send_embeds(description_lines, ctx)
+    #     conn.close()
+
+    #     return
