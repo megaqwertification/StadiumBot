@@ -10,6 +10,7 @@ from helper_functions.btt_helper_functions import get_stage_total, get_char_tota
 from helper_functions.event_helper_functions import get_current_event_wr, get_event_total
 from helper_functions.hrc_helper_functions import get_current_hrc_wr, get_hrc_total
 from helper_functions.ten_mm_helper_functions import get_current_10mm_wr, get_10mm_total
+from helper_functions.bounty_helper_functions import initialize_bounty, select_new_bounty, matches_current_bounty, get_current_bounty
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
@@ -193,9 +194,27 @@ def register_owner_commands(bot: Client):
         cur.execute(sql_q)
         conn.commit()
 
+        # Check for TAS MM bounty completion
+        bounty_message = None
+        if is_tas and char != stage:
+            # Check if this submission completes the current bounty
+            if matches_current_bounty(char, stage):
+                # This is the first TAS record for the current bounty!
+                try:
+                    new_bounty = select_new_bounty()
+                    if new_bounty:
+                        bounty_message = f'\n\n🎯 **BOUNTY COMPLETED!**\nNew bounty: **{new_bounty[0]}** on **{new_bounty[1]}** stage'
+                    else:
+                        bounty_message = f'\n\n🎉 **ALL BOUNTIES COMPLETED!** This was the last uncompleted TAS mismatch!'
+                except Exception as e:
+                    # Don't fail the record submission if bounty update fails
+                    bounty_message = f'\n\n⚠️ Bounty update failed: {str(e)}'
+
         if prev_wr == None:
             # TODO: update desc if it needs tags or something
             description = f'Added BTT{" TAS" if is_tas else ""} record: {char}/{stage} - {score_str} by {player} at <{video}> ({tags})'
+            if bounty_message:
+                description += bounty_message
             await ctx.send(description)
             return
         
@@ -205,6 +224,8 @@ def register_owner_commands(bot: Client):
             description_lines.append(wr_tie_str)
             tied_with_str = f'Tied with [{prev_wr[1]}]({prev_wr[0][4].pop()})'
             description_lines.append(tied_with_str)
+            if bounty_message:
+                description_lines.append(bounty_message)
             conn.commit()
             await embeds.send_embeds(description_lines, ctx)
             return
@@ -222,12 +243,16 @@ def register_owner_commands(bot: Client):
         stage_total_str = f'{stage} stage{" TAS" if is_tas else ""} total improved from {old_stage_total[1]} to {new_stage_total[1]}'
         description_lines.append(stage_total_str)
 
+        # Add TAS MM bounty completion message if applicable
+        if bounty_message:
+            description_lines.append(bounty_message)
+
         # TODO: test None/NULL values, tags one is for sure wrong -> change to 'NULL' or empty sets
         # TODO: test datetime values
 
-        
+
         conn.commit()
-        
+
         await embeds.send_embeds(description_lines, ctx)
 
 
@@ -786,3 +811,89 @@ def register_owner_commands(bot: Client):
         description_lines.append(event_total_str)
 
         await embeds.send_embeds(description_lines, ctx)
+
+    @bot.command(
+        name='bounty-init',
+        description='[ADMIN] Initialize the TAS MM bounty system with first random pairing',
+        scope=GUILD_IDS
+    )
+    async def _bounty_init(ctx: CommandContext):
+        """
+        Initialize the bounty system by creating the first random bounty.
+
+        This should only be run once during initial setup, or if the bounty_state
+        table is empty. Will fail if a bounty already exists.
+        """
+        await ctx.defer()
+
+        # Authorization check - only bot owner can use this command
+        if ctx.author.id != str(199563168345882624):
+            description = 'Unauthorized use of command, only the bot owner can initialize bounties'
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        existing_bounty = get_current_bounty()
+        if existing_bounty:
+            description = f"⚠️ **Bounty Already Exists**\n\nCurrent bounty: **{existing_bounty['character']}** on **{existing_bounty['stage']}**\n\nUse `/bounty-refresh` to change it."
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        try:
+            first_bounty = initialize_bounty()
+
+            if not first_bounty:
+                description = "🎉 **All Bounties Already Completed!**\n\nAll 725 TAS mismatch pairings have records in the database."
+                await ctx.send(description)
+                return None
+
+            description = f"✅ **Bounty System Initialized!**\n\nFirst bounty: **{first_bounty[0]}** on **{first_bounty[1]}** stage\n\nUsers can now use `/bounty` to view the current bounty."
+            await ctx.send(description)
+
+        except Exception as e:
+            description = f"❌ **Error Initializing Bounty**\n\n```{str(e)}```\n\nMake sure the `bounty_state` table exists in the database."
+            await ctx.send(description, ephemeral=True)
+
+    @bot.command(
+        name='bounty-refresh',
+        description='[ADMIN] Manually refresh the bounty to a new random mismatch',
+        scope=GUILD_IDS
+    )
+    async def _bounty_refresh(ctx: CommandContext):
+        """
+        Manually refresh the bounty to a new random uncompleted TAS mismatch.
+
+        This can be used to:
+        - Fix a bounty that's already completed
+        - Reroll to a different bounty
+        - Update after database changes
+        """
+        await ctx.defer()
+
+        if ctx.author.id != str(199563168345882624):
+            description = 'Unauthorized use of command, only the bot owner can refresh bounties'
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        current_bounty = get_current_bounty()
+        if not current_bounty:
+            description = "❌ **Bounty Not Initialized**\n\nUse `/bounty-init` first to set up the bounty system."
+            await ctx.send(description, ephemeral=True)
+            return None
+
+        old_char = current_bounty['character']
+        old_stage = current_bounty['stage']
+
+        try:
+            new_bounty = select_new_bounty()
+
+            if not new_bounty:
+                description = "🎉 **All Bounties Completed!**\n\nAll 725 TAS mismatch pairings have been completed!\n\nNo more runs available."
+                await ctx.send(description)
+                return None
+
+            description = f"🔄 **Bounty Refreshed!**\n\nPrevious: **{old_char}** on **{old_stage}**\nNew: **{new_bounty[0]}** on **{new_bounty[1]}**"
+            await ctx.send(description)
+
+        except Exception as e:
+            description = f"❌ **Error Refreshing TAS MM Bounty**\n\n```{str(e)}```"
+            await ctx.send(description, ephemeral=True)
