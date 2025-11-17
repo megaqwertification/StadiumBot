@@ -7,6 +7,8 @@ from interactions import CommandContext, Option, OptionType, Choice
 from constants.general_constants import ALIASES, GUILD_IDS
 from constants.btt_constants import BTT_STAGES, BTT_CHARACTERS, BTT_CHARS_STAGE_COMMAND, BTT_SUS_TAGS
 from formulas import get_char_name, time_to_frames, frames_to_time_string
+from helper_functions.bounty_helper_functions import get_current_bounty, is_bounty_already_completed, get_bounty_progress
+
 
 from helper_functions.btt_helper_functions import filter_btt_tags
 import best_total 
@@ -645,3 +647,92 @@ def register_btt_commands(bot: Client):
         await embeds.send_embeds(description_lines, ctx)
 
         return
+    
+    @bot.command(
+        name='bounty',
+        description='View the current TAS MM bounty',
+        scope=GUILD_IDS
+    )
+    async def _bounty(ctx: CommandContext):
+        """
+        Retrieve and display the current active TAS MM bounty run.
+        """
+        await ctx.defer()
+
+        bounty = get_current_bounty()
+
+        if not bounty:
+            description = "❌ **No Active Bounty**\n\nThe bounty system has not been initialized yet.\nContact an admin to set up the first TAS MM bounty!"
+            await ctx.send(description)
+            return
+
+        char = bounty['character']
+        stage = bounty['stage']
+        created = bounty['created_date']
+
+        # For display purposes, check if the listed bounty is somehow already completed in the db
+        is_completed = is_bounty_already_completed()
+
+        # Get progress statistics
+        progress = get_bounty_progress()
+        progressPercent = (progress['completed'] / progress['total']) * 100 if progress['total'] > 0 else 0
+        progressString = f"{progressPercent:.2f}% TAS MM completed ({progress['completed']}/{progress['total']})"
+
+        # Format date
+        date_str = created.strftime('%B %d, %Y') if created else 'Unknown'
+
+        # Build status message
+        if is_completed:
+            # in practice this should not happen since we auto-refresh on completion
+            status_emoji = "⚠️"
+            status_text = "COMPLETED (Needs Refresh)"
+            status_note = "\n\n⚠️ This bounty already has TAS records. An admin should refresh to a new bounty."
+        else:
+            status_emoji = "🎯"
+            status_text = ""
+            status_note = ""
+
+        # Build description
+        description = f"""**{status_emoji} Current Bounty Run** - {status_text}
+
+**Character:** {char}
+**Stage:** {stage}
+**Issued:** {date_str}
+
+Complete this TAS run to unlock the next bounty!
+
+**Progress:** {progressString} {status_note}
+"""
+
+        await ctx.send(description)
+
+    @bot.command(
+        name='bounty-stats',
+        description='View bounty system statistics',
+        scope=GUILD_IDS
+    )
+    async def _bounty_stats(ctx: CommandContext):
+        """
+        Display statistics about the bounty system progress.
+        """
+        await ctx.defer()
+
+        # Get progress statistics
+        progress = get_bounty_progress()
+
+        # Calculate percentage
+        if progress['total'] > 0:
+            percentage = (progress['completed'] / progress['total']) * 100
+        else:
+            percentage = 0
+
+        # Build description
+        description = f"""**📊 Bounty System Statistics**
+
+**Completed TAS MM:** {progress['completed']}
+**Total Possible TAS MM:** {progress['total']}
+**Remaining Runs:** {progress['remaining']}
+**Completion Rate:** {percentage:.2f}%
+"""
+
+        await ctx.send(description)
