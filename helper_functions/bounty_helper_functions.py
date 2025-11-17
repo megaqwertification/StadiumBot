@@ -49,7 +49,7 @@ def get_uncompleted_tas_mismatches():
         AND character != stage
     """
     cur.execute(sql)
-    completed_pairings = set((row[0], row[1]) for row in cur.fetchall())
+    completed_pairings = set((row[0].strip('" \n'), row[1].strip('" \n')) for row in cur.fetchall())
 
     conn.close()
 
