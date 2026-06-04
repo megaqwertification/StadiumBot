@@ -8,6 +8,7 @@ including bounty selection, querying, and completion checking.
 import secrets
 from db import connect
 from constants.btt_constants import BTT_CHARACTERS, BTT_STAGES, IMPOSSIBLE_PAIRINGS
+from helper_functions.btt_helper_functions import filter_btt_tags
 
 
 def get_uncompleted_tas_mismatches():
@@ -183,6 +184,40 @@ def get_bounty_progress():
         'total': total_possible,
         'remaining': remaining
     }
+
+
+def get_rta_wr_video(character, stage):
+    """
+    Return the YouTube URL of the current RTA (non-TAS) WR for a pairing,
+    or None if no RTA record exists.
+
+    Kept separate from get_current_btt_wr because that helper has side
+    effects on the no-record path and returns more than we need here.
+    """
+    conn = connect()
+    try:
+        cur = conn.cursor()
+        sql = """
+            SELECT * FROM btt_table
+            WHERE character = %s AND stage = %s AND tas = FALSE
+            ORDER BY score ASC, date ASC
+        """
+        cur.execute(sql, (character, stage))
+        # Apply the same default tag filtering /btt-wr uses so we don't
+        # surface a record (1T, misfire, AR, LSS/BSS/RSS/TSS) that the
+        # canonical WR query would reject.
+        records = filter_btt_tags([], cur)
+    finally:
+        conn.close()
+
+    if not records:
+        return None
+
+    sources = records[0][4]
+    if not sources:
+        return None
+
+    return sources[0]
 
 
 def is_bounty_already_completed():

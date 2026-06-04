@@ -10,7 +10,7 @@ from helper_functions.btt_helper_functions import get_stage_total, get_char_tota
 from helper_functions.event_helper_functions import get_current_event_wr, get_event_total
 from helper_functions.hrc_helper_functions import get_current_hrc_wr, get_hrc_total
 from helper_functions.ten_mm_helper_functions import get_current_10mm_wr, get_10mm_total
-from helper_functions.bounty_helper_functions import initialize_bounty, select_new_bounty, matches_current_bounty, get_current_bounty
+from helper_functions.bounty_helper_functions import initialize_bounty, select_new_bounty, matches_current_bounty, get_current_bounty, get_rta_wr_video
 import embeds
 
 from interactions import Client, CommandContext, Permissions, Option, OptionType, Choice
@@ -204,6 +204,12 @@ def register_owner_commands(bot: Client):
                     new_bounty = select_new_bounty()
                     if new_bounty:
                         bounty_message = f'\n\n🎯 **BOUNTY COMPLETED!**\nNew bounty: **{new_bounty[0]}** on **{new_bounty[1]}** stage'
+                        try:
+                            wr_video = get_rta_wr_video(new_bounty[0], new_bounty[1])
+                            if wr_video:
+                                bounty_message += f'\nCurrent RTA WR: {wr_video}'
+                        except Exception:
+                            pass
                     else:
                         bounty_message = f'\n\n🎉 **ALL BOUNTIES COMPLETED!** This was the last uncompleted TAS mismatch!'
                 except Exception as e:
@@ -847,6 +853,12 @@ def register_owner_commands(bot: Client):
                 return None
 
             description = f"✅ **Bounty System Initialized!**\n\nFirst bounty: **{first_bounty[0]}** on **{first_bounty[1]}** stage\n\nUsers can now use `/bounty` to view the current bounty."
+            try:
+                wr_video = get_rta_wr_video(first_bounty[0], first_bounty[1])
+                if wr_video:
+                    description += f'\n\nCurrent RTA WR: {wr_video}'
+            except Exception:
+                pass
             await ctx.send(description)
 
         except Exception as e:
@@ -892,6 +904,12 @@ def register_owner_commands(bot: Client):
                 return None
 
             description = f"🔄 **Bounty Refreshed!**\n\nPrevious: **{old_char}** on **{old_stage}**\nNew: **{new_bounty[0]}** on **{new_bounty[1]}**"
+            try:
+                wr_video = get_rta_wr_video(new_bounty[0], new_bounty[1])
+                if wr_video:
+                    description += f'\n\nCurrent RTA WR: {wr_video}'
+            except Exception:
+                pass
             await ctx.send(description)
 
         except Exception as e:
